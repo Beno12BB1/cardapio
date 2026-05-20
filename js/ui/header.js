@@ -8,24 +8,29 @@ export function renderHeader(usuario) {
 
   el.innerHTML = `
     <header class="h-14 bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700
-                   px-4 flex items-center justify-between shrink-0 gap-3">
+                   px-4 flex items-center justify-between shrink-0 gap-2">
       <div class="flex items-center gap-2 min-w-0">
         <button onclick="window._toggleSidebar()" title="Menu"
-          class="lg:hidden p-1.5 rounded-lg text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors shrink-0">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+          class="lg:hidden shrink-0 p-2 rounded-lg text-slate-500
+                 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M4 6h16M4 12h16M4 18h16"/>
           </svg>
         </button>
-        <h1 id="titulo-pagina" class="text-base font-semibold text-slate-800 dark:text-slate-100 truncate"></h1>
+        <h1 id="titulo-pagina"
+          class="text-sm sm:text-base font-semibold text-slate-800 dark:text-slate-100 truncate"></h1>
       </div>
+
       <div class="flex items-center gap-2 shrink-0">
         <button id="btn-tema" title="Alternar tema"
           class="p-1.5 rounded-lg text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
           <span id="icone-tema">${heroicon('moon')}</span>
         </button>
-        <div class="flex items-center gap-2 text-sm">
-          ${heroicon('user-circle', 'text-orange-500 w-7 h-7')}
-          <span class="font-medium text-slate-700 dark:text-slate-200 hidden sm:block max-w-[120px] truncate">${email}</span>
+        <div class="flex items-center gap-1.5 text-sm">
+          ${heroicon('user-circle', 'text-orange-500 w-7 h-7 shrink-0')}
+          <span class="hidden sm:block font-medium text-slate-700 dark:text-slate-200
+                       max-w-[120px] truncate">${email}</span>
         </div>
       </div>
     </header>`
@@ -55,7 +60,7 @@ export function renderHeader(usuario) {
       if (!main) return
       main.addEventListener('scroll', () => {
         const show = main.scrollTop > 200
-        btn.style.opacity = show ? '1' : '0'
+        btn.style.opacity   = show ? '1' : '0'
         btn.style.transform = show ? 'translateY(0)' : 'translateY(8px)'
         btn.style.pointerEvents = show ? 'auto' : 'none'
       }, { passive: true })
