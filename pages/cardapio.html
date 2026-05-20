@@ -1,15 +1,42 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <style>body{visibility:hidden}</style>
+  <style>
+    body { visibility: hidden }
+    @page { size: A4; margin: 1cm; }
+    @media print {
+      * { overflow: visible !important; }
+      body { visibility: visible !important; background: white !important; }
+      .flex.h-screen { display: block !important; filter: none !important; }
+      #header, #sidebar, .no-print { display: none !important; }
+      main { overflow: visible !important; padding: 0 !important; }
+      #conteudo-cardapio .grid {
+        display: grid !important;
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 0.5rem !important;
+      }
+      .card {
+        page-break-inside: avoid !important;
+        -moz-column-break-inside: avoid !important;
+             break-inside: avoid !important;
+        box-shadow: none !important;
+        border: 1px solid #e2e8f0 !important;
+        animation: none !important;
+        transform: none !important;
+      }
+      #conteudo-cardapio h2 { page-break-after: avoid; -moz-column-break-after: avoid; break-after: avoid; }
+      #conteudo-cardapio > div { margin-bottom: 1rem; }
+      .card img { max-width: 100% !important; height: 100px !important; -o-object-fit: cover !important; object-fit: cover !important; }
+    }
+  </style>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ver Cardápio — Cardápio Digital</title>
-  <script type="module" crossorigin src="/cardapio/assets/cardapio-D_B6I8Fq.js"></script>
+  <script type="module" crossorigin src="/cardapio/assets/cardapio-g6nPm9pu.js"></script>
   <link rel="modulepreload" crossorigin href="/cardapio/assets/auth-BWDIw5O6.js">
-  <link rel="modulepreload" crossorigin href="/cardapio/assets/sweetalert2.esm.all-8-IS4QHV.js">
+  <link rel="modulepreload" crossorigin href="/cardapio/assets/sweetalert2.esm.all-DGQl66V2.js">
   <link rel="modulepreload" crossorigin href="/cardapio/assets/header-Dw_q0Stu.js">
-  <link rel="stylesheet" crossorigin href="/cardapio/assets/sweetalert2.esm-DHyunGrQ.css">
+  <link rel="stylesheet" crossorigin href="/cardapio/assets/sweetalert2.esm-C1001D3F.css">
 </head>
 <body class="bg-slate-100 dark:bg-slate-900 text-slate-900 dark:text-slate-100">
 <div class="flex h-screen overflow-hidden">
