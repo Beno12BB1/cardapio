@@ -1,4 +1,4 @@
-import{v as u,s as c}from"./auth-BWDIw5O6.js";import{S as v}from"./sweetalert2.esm.all-Dx-T5OB6.js";import{b as p,r as x,s as b,h as m}from"./header-25cIYKJM.js";async function g(){var o;const e=await u();if(!e)return;p("dashboard"),x(e),b("Dashboard");const a=((o=e.user_metadata)==null?void 0:o.full_name)||e.email.split("@")[0],t=new Date().getHours(),n=t<12?"Bom dia":t<18?"Boa tarde":"Boa noite";document.getElementById("boas-vindas").innerHTML=`
+import{v as u,s as c}from"./auth-BWDIw5O6.js";import{S as v}from"./sweetalert2.esm.all-DlTzfnTl.js";import{b as p,r as x,s as b,h as m}from"./header-25cIYKJM.js";async function g(){var o;const e=await u();if(!e)return;p("dashboard"),x(e),b("Dashboard");const a=((o=e.user_metadata)==null?void 0:o.full_name)||e.email.split("@")[0],t=new Date().getHours(),n=t<12?"Bom dia":t<18?"Boa tarde":"Boa noite";document.getElementById("boas-vindas").innerHTML=`
     <div>
       <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100">${n}, ${a}! 👋</h2>
       <p class="text-sm text-slate-500 dark:text-slate-400 mt-0.5">Aqui está o resumo do seu cardápio.</p>

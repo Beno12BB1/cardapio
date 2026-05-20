@@ -5,12 +5,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Categorias — Cardápio Digital</title>
-  <script type="module" crossorigin src="/cardapio/assets/categorias-3j4ZIeVp.js"></script>
+  <script type="module" crossorigin src="/cardapio/assets/categorias-PIGdnlZR.js"></script>
   <link rel="modulepreload" crossorigin href="/cardapio/assets/auth-BWDIw5O6.js">
-  <link rel="modulepreload" crossorigin href="/cardapio/assets/sweetalert2.esm.all-Dx-T5OB6.js">
+  <link rel="modulepreload" crossorigin href="/cardapio/assets/sweetalert2.esm.all-DlTzfnTl.js">
   <link rel="modulepreload" crossorigin href="/cardapio/assets/header-25cIYKJM.js">
-  <link rel="modulepreload" crossorigin href="/cardapio/assets/toast-18s8eaFz.js">
-  <link rel="stylesheet" crossorigin href="/cardapio/assets/sweetalert2.esm-Bi0jpqXl.css">
+  <link rel="modulepreload" crossorigin href="/cardapio/assets/dropdown-bibIyZlW.js">
+  <link rel="stylesheet" crossorigin href="/cardapio/assets/sweetalert2.esm-D8rUYXHE.css">
 </head>
 <body class="bg-slate-100 dark:bg-slate-900 text-slate-900 dark:text-slate-100">
 <div class="flex h-screen overflow-hidden">
@@ -46,9 +46,10 @@
             <thead class="table-header">
               <tr>
                 <th class="px-4 py-3 text-left cursor-pointer select-none hover:bg-slate-100 dark:hover:bg-slate-600/60 transition-colors" onclick="window._sortBy('nome')">Nome<span data-sort="nome" class="text-slate-400 text-xs"> ↕</span></th>
-                <th class="px-4 py-3 text-left">Descrição</th>
-                <th class="px-4 py-3 text-left">Situação</th>
-                <th class="px-4 py-3 text-right">Ações</th>
+                <th class="px-4 py-3 text-left hidden sm:table-cell">Descrição</th>
+                <th class="px-4 py-3 text-left hidden sm:table-cell">Situação</th>
+                <th class="px-4 py-3 text-right hidden sm:table-cell">Ações</th>
+                <th class="px-2 py-3 sm:hidden"></th>
               </tr>
             </thead>
             <tbody id="tbody"></tbody>
