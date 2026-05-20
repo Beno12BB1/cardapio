@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Página não encontrada — Cardápio Digital</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
+      font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+    }
+    .container { text-align: center; padding: 2rem; }
+    .emoji {
+      font-size: 5rem;
+      display: block;
+      margin-bottom: 1rem;
+      animation: float 3s ease-in-out infinite;
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50%       { transform: translateY(-12px); }
+    }
+    h1 {
+      font-size: 7rem;
+      font-weight: 800;
+      color: #f97316;
+      line-height: 1;
+      letter-spacing: -4px;
+    }
+    .subtitulo {
+      font-size: 1.25rem;
+      color: #64748b;
+      margin: 1rem 0 0.5rem;
+      font-weight: 600;
+    }
+    .descricao {
+      font-size: 0.95rem;
+      color: #94a3b8;
+      margin-bottom: 2rem;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: #f97316;
+      color: white;
+      padding: 0.8rem 1.75rem;
+      border-radius: 0.75rem;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: background 0.2s, transform 0.1s;
+      box-shadow: 0 4px 14px rgba(249,115,22,0.35);
+    }
+    .btn:hover { background: #ea580c; transform: translateY(-1px); }
+    .rodape {
+      position: fixed;
+      bottom: 1.5rem;
+      width: 100%;
+      text-align: center;
+      font-size: 0.75rem;
+      color: #cbd5e1;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <span class="emoji">🍽️</span>
+    <h1>404</h1>
+    <p class="subtitulo">Essa página não está no cardápio.</p>
+    <p class="descricao">O endereço que você digitou não existe ou foi removido.</p>
+    <a class="btn" href="/cardapiio/">← Voltar ao início</a>
+  </div>
+  <p class="rodape">Cardápio Digital © 2025 — Fatec Itu</p>
+</body>
+</html>
