@@ -41,7 +41,7 @@ async function carregarDados() {
       supabase.from('categorias').select('*', { count: 'exact', head: true }),
       supabase.from('categorias').select('*', { count: 'exact', head: true }).eq('ativo', true),
       supabase.from('pratos')
-        .select('id, nome, preco, disponivel, categorias(nome)')
+        .select('id, nome, preco, disponivel, emoji, categorias(nome)')
         .order('created_at', { ascending: false })
         .limit(5),
       supabase.from('categorias')
@@ -88,9 +88,12 @@ function renderPratosRecentes(pratos) {
       : '<span class="badge-indisponivel">Indisponível</span>'
     return `
       <div class="flex items-center justify-between py-2 border-b border-slate-100 dark:border-slate-700 last:border-0">
-        <div>
-          <div class="font-medium text-sm">${p.nome}</div>
-          <div class="text-xs text-slate-400">${p.categorias?.nome || 'Sem categoria'}</div>
+        <div class="flex items-center gap-2">
+          <span class="text-xl">${p.emoji || '🍽️'}</span>
+          <div>
+            <div class="font-medium text-sm">${p.nome}</div>
+            <div class="text-xs text-slate-400">${p.categorias?.nome || 'Sem categoria'}</div>
+          </div>
         </div>
         <div class="flex items-center gap-3">
           <span class="text-sm font-semibold text-orange-600 dark:text-orange-400">

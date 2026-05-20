@@ -2,7 +2,7 @@ import { defineConfig } from 'vite'
 import { resolve } from 'path'
 
 export default defineConfig({
-  base: '/cardapio/',
+  base: '/cardapiio/',
   build: {
     outDir: 'dist',
     rollupOptions: {
