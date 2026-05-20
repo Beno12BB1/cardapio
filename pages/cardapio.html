@@ -3,51 +3,63 @@
 <head>
   <style>
     body { visibility: hidden }
-    @page { size: A4; margin: 1cm; }
     @media print {
-      * { overflow: visible !important; }
-      body { visibility: visible !important; background: white !important; }
+      * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+
+      #sidebar, #header, .no-print { display: none !important; }
+
+      body { background: white !important; color: black !important; margin: 0; padding: 0; visibility: visible !important; }
+
       .flex.h-screen { display: block !important; filter: none !important; }
-      #header, #sidebar, .no-print { display: none !important; }
-      main { overflow: visible !important; padding: 0 !important; }
-      #conteudo-cardapio .grid {
-        display: grid !important;
-        grid-template-columns: repeat(2, 1fr) !important;
-        gap: 0.5rem !important;
-      }
-      .card {
-        page-break-inside: avoid !important;
+
+      main { padding: 10px !important; overflow: visible !important; }
+
+      @page { size: A4; margin: 1.5cm; }
+
+      .grid { display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 12px !important; }
+
+      .card-prato {
         -moz-column-break-inside: avoid !important;
              break-inside: avoid !important;
+        page-break-inside: avoid !important;
+        border: 1px solid #ddd !important;
+        border-radius: 8px !important;
+        padding: 10px !important;
+        background: white !important;
+        display: flex !important;
+        flex-direction: column !important;
+        overflow: hidden !important;
         box-shadow: none !important;
-        border: 1px solid #e2e8f0 !important;
         animation: none !important;
         transform: none !important;
-        overflow: hidden !important;
       }
-      #conteudo-cardapio h2 { page-break-after: avoid; -moz-column-break-after: avoid; break-after: avoid; }
-      #conteudo-cardapio > div { margin-bottom: 1rem; }
-      .card img {
-        display: block !important;
-        max-width: 100% !important;
+
+      .card-prato img {
         width: 100% !important;
-        max-height: 120px !important;
-        height: 120px !important;
+        height: 100px !important;
+        max-height: 100px !important;
         -o-object-fit: cover !important;
            object-fit: cover !important;
+        border-radius: 6px !important;
+        display: block !important;
         margin-bottom: 8px !important;
-        overflow: hidden !important;
+        position: static !important;
+        float: none !important;
       }
+
+      .pills-categorias, .busca-container, button { display: none !important; }
+
+      h2 { font-size: 14px !important; margin: 10px 0 6px !important; }
     }
   </style>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ver Cardápio — Cardápio Digital</title>
-  <script type="module" crossorigin src="/cardapio/assets/cardapio-DQBdditY.js"></script>
+  <script type="module" crossorigin src="/cardapio/assets/cardapio-CweKjXhv.js"></script>
   <link rel="modulepreload" crossorigin href="/cardapio/assets/auth-BFs9X2rx.js">
-  <link rel="modulepreload" crossorigin href="/cardapio/assets/sweetalert2.esm.all-g3P2OzMs.js">
+  <link rel="modulepreload" crossorigin href="/cardapio/assets/sweetalert2.esm.all-QOjssywB.js">
   <link rel="modulepreload" crossorigin href="/cardapio/assets/header-DvM2Ufkd.js">
-  <link rel="stylesheet" crossorigin href="/cardapio/assets/sweetalert2.esm-DuJmifwX.css">
+  <link rel="stylesheet" crossorigin href="/cardapio/assets/sweetalert2.esm-Btlums5Q.css">
 </head>
 <body class="bg-slate-100 dark:bg-slate-900 text-slate-900 dark:text-slate-100">
 <div class="flex h-screen overflow-hidden">
