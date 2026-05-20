@@ -15,6 +15,9 @@ export function renderSidebar(paginaAtiva) {
   const el = document.getElementById('sidebar')
   if (!el) return
 
+  // Mobile: sem largura (filhos são fixed); Desktop: ocupa 256px no flex
+  el.className = 'lg:w-64 lg:shrink-0'
+
   const links = NAV.map(item => {
     const ativo = item.key === paginaAtiva
     return `
@@ -30,7 +33,13 @@ export function renderSidebar(paginaAtiva) {
   }).join('')
 
   el.innerHTML = `
-    <div class="flex flex-col h-full w-64 bg-slate-900 shrink-0">
+    <div id="sidebar-backdrop"
+      class="fixed inset-0 bg-black/50 z-40 opacity-0 pointer-events-none transition-opacity duration-300 lg:hidden"></div>
+
+    <div id="sidebar-panel"
+      class="fixed inset-y-0 left-0 z-50 flex flex-col w-64 bg-slate-900 shrink-0
+             -translate-x-full transition-transform duration-300 ease-in-out
+             lg:static lg:translate-x-0 lg:h-full">
       <div class="px-5 py-6 border-b border-slate-700">
         <div class="flex items-center gap-3">
           <span class="text-2xl">🍕</span>
@@ -52,15 +61,37 @@ export function renderSidebar(paginaAtiva) {
     </div>`
 
   document.getElementById('btn-logout')?.addEventListener('click', () => logout())
+  document.getElementById('sidebar-backdrop')?.addEventListener('click', () => window._closeSidebar())
+
+  el.querySelectorAll('nav a').forEach(a => {
+    a.addEventListener('click', () => {
+      if (window.innerWidth < 1024) window._closeSidebar()
+    })
+  })
 
   supabase.from('pratos')
     .select('*', { count: 'exact', head: true })
     .eq('disponivel', true)
     .then(({ count }) => {
       const badge = document.getElementById('badge-cardapio')
-      if (badge && count) {
-        badge.textContent = count
-        badge.classList.remove('hidden')
-      }
+      if (badge && count) { badge.textContent = count; badge.classList.remove('hidden') }
     })
+}
+
+window._toggleSidebar = () => {
+  const panel    = document.getElementById('sidebar-panel')
+  const backdrop = document.getElementById('sidebar-backdrop')
+  if (!panel || !backdrop) return
+  const isOpen = !panel.classList.contains('-translate-x-full')
+  panel.classList.toggle('-translate-x-full', isOpen)
+  backdrop.classList.toggle('opacity-0', isOpen)
+  backdrop.classList.toggle('pointer-events-none', isOpen)
+}
+
+window._closeSidebar = () => {
+  const panel    = document.getElementById('sidebar-panel')
+  const backdrop = document.getElementById('sidebar-backdrop')
+  if (!panel || !backdrop) return
+  panel.classList.add('-translate-x-full')
+  backdrop.classList.add('opacity-0', 'pointer-events-none')
 }
