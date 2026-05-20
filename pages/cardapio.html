@@ -1,7 +1,33 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <style>body{visibility:hidden}</style>
+  <style>
+    body { visibility: hidden }
+    @page { size: A4; margin: 1cm; }
+    @media print {
+      * { overflow: visible !important; }
+      body { visibility: visible !important; background: white !important; }
+      .flex.h-screen { display: block !important; filter: none !important; }
+      #header, #sidebar, .no-print { display: none !important; }
+      main { overflow: visible !important; padding: 0 !important; }
+      #conteudo-cardapio .grid {
+        display: grid !important;
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 0.5rem !important;
+      }
+      .card {
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+        box-shadow: none !important;
+        border: 1px solid #e2e8f0 !important;
+        animation: none !important;
+        transform: none !important;
+      }
+      #conteudo-cardapio h2 { page-break-after: avoid; break-after: avoid; }
+      #conteudo-cardapio > div { margin-bottom: 1rem; }
+      .card img { max-width: 100% !important; height: 100px !important; object-fit: cover !important; }
+    }
+  </style>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ver Cardápio — Cardápio Digital</title>

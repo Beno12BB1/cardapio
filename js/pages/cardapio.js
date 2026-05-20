@@ -60,7 +60,7 @@ async function carregarTudo() {
   try {
     const { data, error } = await supabase
       .from('pratos')
-      .select('id, nome, descricao, preco, tempo_preparo, disponivel, emoji, categorias(id, nome)')
+      .select('id, nome, descricao, preco, tempo_preparo, disponivel, emoji, imagem_url, categorias(id, nome)')
       .order('nome')
 
     if (error) throw error
@@ -171,10 +171,13 @@ function cartaoPrato(p, idx = 0) {
   const badgeDisp = p.disponivel
     ? '<span class="badge-disponivel">Disponível</span>'
     : '<span class="badge-indisponivel">Indisponível</span>'
+  const topoCard = p.imagem_url
+    ? `<img src="${p.imagem_url}" alt="${p.nome}" class="w-full h-40 object-cover rounded-lg mb-1" loading="lazy" onerror="this.style.display='none'">`
+    : `<div class="text-5xl text-center py-2">${p.emoji || '🍽️'}</div>`
 
   return `
     <div class="card p-4 flex flex-col gap-2 hover:-translate-y-1 hover:shadow-md ${!p.disponivel ? 'opacity-60' : ''}" style="animation-delay:${idx * 50}ms">
-      <div class="text-4xl text-center py-1">${p.emoji || '🍽️'}</div>
+      ${topoCard}
       <div class="flex items-start justify-between gap-2">
         <h3 class="font-semibold text-slate-800 dark:text-slate-100 leading-tight">${p.nome}</h3>
         ${badgeDisp}

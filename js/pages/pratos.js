@@ -93,7 +93,7 @@ async function carregar() {
   const inicio = (pagina - 1) * POR_PAGINA
   let q = supabase
     .from('pratos')
-    .select('id, nome, descricao, preco, tempo_preparo, disponivel, emoji, categorias(id, nome)', { count: 'exact' })
+    .select('id, nome, descricao, preco, tempo_preparo, disponivel, emoji, imagem_url, categorias(id, nome)', { count: 'exact' })
     .order(sortCol, { ascending: sortDir === 'asc' })
 
   if (busca)            q = q.ilike('nome', `%${busca}%`)
@@ -195,7 +195,7 @@ async function abrirModal(id = null) {
     return
   }
 
-  let d = { nome: '', descricao: '', preco: '', tempo_preparo: '', disponivel: true, categoria_id: '', emoji: '🍽️' }
+  let d = { nome: '', descricao: '', preco: '', tempo_preparo: '', disponivel: true, categoria_id: '', emoji: '🍽️', imagem_url: '' }
   if (id) {
     const { data } = await supabase.from('pratos').select('*').eq('id', id).single()
     if (data) d = data
@@ -218,6 +218,16 @@ async function abrirModal(id = null) {
           <div>
             <label class="text-sm font-medium text-slate-700">Emoji</label>
             <input id="s-emoji" class="input-field mt-1 text-center text-xl" placeholder="🍽️" value="${d.emoji || '🍽️'}">
+          </div>
+        </div>
+        <div>
+          <label class="text-sm font-medium text-slate-700">URL da Imagem (opcional)</label>
+          <input id="s-imagem" type="url" class="input-field mt-1"
+            placeholder="https://exemplo.com/imagem.jpg"
+            value="${d.imagem_url || ''}">
+          <div id="preview-imagem" class="mt-2 ${d.imagem_url ? '' : 'hidden'}">
+            <img id="img-preview" src="${d.imagem_url || ''}"
+              class="w-full h-28 object-cover rounded-lg border border-slate-200 dark:border-slate-600">
           </div>
         </div>
         <div>
@@ -251,6 +261,17 @@ async function abrirModal(id = null) {
     confirmButtonText: 'Salvar',
     cancelButtonText: 'Cancelar',
     confirmButtonColor: '#f97316',
+    didOpen: () => {
+      const inputImg = document.getElementById('s-imagem')
+      const preview  = document.getElementById('preview-imagem')
+      const imgEl    = document.getElementById('img-preview')
+      if (!inputImg) return
+      inputImg.addEventListener('input', () => {
+        const url = inputImg.value.trim()
+        imgEl.src = url
+        preview.classList.toggle('hidden', !url)
+      })
+    },
     preConfirm: () => {
       const nome         = document.getElementById('s-nome').value.trim()
       const descricao    = document.getElementById('s-desc').value.trim() || null
@@ -259,6 +280,7 @@ async function abrirModal(id = null) {
       const categoria_id = document.getElementById('s-cat').value
       const disponivel   = document.getElementById('s-disp').checked
       const emoji        = document.getElementById('s-emoji').value.trim() || '🍽️'
+      const imagem_url   = document.getElementById('s-imagem').value.trim() || null
 
       if (!nome)         { Swal.showValidationMessage('O nome é obrigatório.'); return false }
       if (!precoStr)     { Swal.showValidationMessage('O preço é obrigatório.'); return false }
@@ -267,7 +289,7 @@ async function abrirModal(id = null) {
       const preco = parseFloat(precoStr)
       if (isNaN(preco) || preco < 0) { Swal.showValidationMessage('Preço inválido.'); return false }
 
-      return { nome, descricao, preco, tempo_preparo: tempoStr ? parseInt(tempoStr) : null, categoria_id, disponivel, emoji }
+      return { nome, descricao, preco, tempo_preparo: tempoStr ? parseInt(tempoStr) : null, categoria_id, disponivel, emoji, imagem_url }
     },
   })
   if (!value) return

@@ -42,7 +42,7 @@ async function carregarDados() {
       supabase.from('categorias').select('*', { count: 'exact', head: true }),
       supabase.from('categorias').select('*', { count: 'exact', head: true }).eq('ativo', true),
       supabase.from('pratos')
-        .select('id, nome, preco, disponivel, emoji, categorias(nome)')
+        .select('id, nome, preco, disponivel, emoji, imagem_url, categorias(nome)')
         .order('created_at', { ascending: false })
         .limit(5),
       supabase.from('categorias')
