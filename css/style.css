@@ -90,6 +90,30 @@
   pointer-events: none;
 }
 
+/* ── SweetAlert2: dark mode ─────────────────────────── */
+html.dark .swal2-popup {
+  background-color: #1e293b !important;
+  color: #f1f5f9 !important;
+}
+html.dark .swal2-title,
+html.dark .swal2-html-container {
+  color: #f1f5f9 !important;
+}
+html.dark .swal2-input,
+html.dark .swal2-select,
+html.dark .swal2-textarea {
+  background-color: #0f172a !important;
+  color: #f1f5f9 !important;
+  border-color: #475569 !important;
+}
+html.dark .swal2-label {
+  color: #cbd5e1 !important;
+}
+html.dark .swal2-validation-message {
+  background-color: #1e293b !important;
+  color: #fca5a5 !important;
+}
+
 /* ── SweetAlert2: blur background ───────────────────── */
 body.swal2-shown .flex.h-screen {
   filter: blur(4px);

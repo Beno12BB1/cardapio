@@ -223,11 +223,18 @@ async function abrirModal(id = null) {
         <div>
           <label class="text-sm font-medium text-slate-700">Imagem (opcional)</label>
           ${d.imagem_url ? `
-            <div class="mb-2 mt-1">
+            <div id="imagem-atual-wrapper" class="mb-2 mt-1">
               <img src="${d.imagem_url}"
                 class="w-full h-24 object-cover rounded-lg border border-slate-200 dark:border-slate-600">
-              <p class="text-xs text-slate-400 mt-0.5">Imagem atual — escolha um arquivo para substituir</p>
-            </div>` : ''}
+              <div class="flex items-center justify-between mt-1">
+                <p class="text-xs text-slate-400">Imagem atual</p>
+                <button type="button" id="btn-remover-imagem"
+                  class="text-xs text-red-500 hover:text-red-700 transition-colors flex items-center gap-1">
+                  🗑️ Remover imagem
+                </button>
+              </div>
+            </div>
+            <input type="hidden" id="flag-remover" value="false">` : ''}
           <input id="s-imagem" type="file" accept="image/*"
             class="block w-full mt-1 text-sm text-slate-500 cursor-pointer rounded-lg
                    file:mr-3 file:py-1.5 file:px-4 file:rounded-lg file:border-0
@@ -287,6 +294,16 @@ async function abrirModal(id = null) {
         reader.onload = e => { imgEl.src = e.target.result; preview.classList.remove('hidden') }
         reader.readAsDataURL(file)
       })
+      document.getElementById('btn-remover-imagem')?.addEventListener('click', () => {
+        const wrapper = document.getElementById('imagem-atual-wrapper')
+        if (wrapper) wrapper.innerHTML = `
+          <div class="text-center mb-2 py-1">
+            <div class="text-4xl">${d.emoji || '🍽️'}</div>
+            <p class="text-xs text-slate-400 mt-1">Nenhuma imagem — emoji será exibido no lugar</p>
+          </div>`
+        const flag = document.getElementById('flag-remover')
+        if (flag) flag.value = 'true'
+      })
     },
     preConfirm: async () => {
       const nome         = document.getElementById('s-nome').value.trim()
@@ -305,27 +322,36 @@ async function abrirModal(id = null) {
       if (isNaN(preco) || preco < 0) { Swal.showValidationMessage('Preço inválido.'); return false }
 
       let imagem_url = d.imagem_url || null
-      const arquivo  = document.getElementById('s-imagem')?.files[0]
+      const removerImagem = document.getElementById('flag-remover')?.value === 'true'
 
-      if (arquivo) {
-        const progressBar = document.getElementById('progress-bar')
-        const progressDiv = document.getElementById('upload-progress')
-        progressDiv.classList.remove('hidden')
-        progressBar.style.width = '0%'
+      if (removerImagem) {
+        if (d.imagem_url?.includes('/storage/v1/object/public/pratos/')) {
+          const path = d.imagem_url.split('/pratos/')[1]
+          if (path) await supabase.storage.from('pratos').remove([path]).catch(() => {})
+        }
+        imagem_url = null
+      } else {
+        const arquivo = document.getElementById('s-imagem')?.files[0]
+        if (arquivo) {
+          const progressBar = document.getElementById('progress-bar')
+          const progressDiv = document.getElementById('upload-progress')
+          progressDiv.classList.remove('hidden')
+          progressBar.style.width = '0%'
 
-        const tick = setInterval(() => {
-          const w = parseFloat(progressBar.style.width) || 0
-          if (w < 80) progressBar.style.width = `${w + 15}%`
-        }, 200)
+          const tick = setInterval(() => {
+            const w = parseFloat(progressBar.style.width) || 0
+            if (w < 80) progressBar.style.width = `${w + 15}%`
+          }, 200)
 
-        try {
-          imagem_url = await uploadImagem(arquivo)
-          clearInterval(tick)
-          progressBar.style.width = '100%'
-        } catch (err) {
-          clearInterval(tick)
-          Swal.showValidationMessage(`Erro no upload: ${err.message}`)
-          return false
+          try {
+            imagem_url = await uploadImagem(arquivo)
+            clearInterval(tick)
+            progressBar.style.width = '100%'
+          } catch (err) {
+            clearInterval(tick)
+            Swal.showValidationMessage(`Erro no upload: ${err.message}`)
+            return false
+          }
         }
       }
 

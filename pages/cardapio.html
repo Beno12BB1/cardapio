@@ -22,10 +22,20 @@
         border: 1px solid #e2e8f0 !important;
         animation: none !important;
         transform: none !important;
+        overflow: hidden !important;
       }
       #conteudo-cardapio h2 { page-break-after: avoid; break-after: avoid; }
       #conteudo-cardapio > div { margin-bottom: 1rem; }
-      .card img { max-width: 100% !important; height: 100px !important; object-fit: cover !important; }
+      .card img {
+        display: block !important;
+        max-width: 100% !important;
+        width: 100% !important;
+        max-height: 120px !important;
+        height: 120px !important;
+        object-fit: cover !important;
+        margin-bottom: 8px !important;
+        overflow: hidden !important;
+      }
     }
   </style>
   <meta charset="UTF-8">
