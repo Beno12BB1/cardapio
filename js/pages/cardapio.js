@@ -171,23 +171,25 @@ function cartaoPrato(p, idx = 0) {
   const badgeDisp = p.disponivel
     ? '<span class="badge-disponivel">Disponível</span>'
     : '<span class="badge-indisponivel">Indisponível</span>'
-  const topoCard = p.imagem_url
-    ? `<img src="${p.imagem_url}" alt="${p.nome}" class="w-full h-40 object-cover rounded-lg mb-1" loading="lazy" onerror="this.style.display='none'">`
+  const imgHtml = p.imagem_url
+    ? `<img src="${p.imagem_url}" alt="${p.nome}" class="w-full h-40 object-cover rounded-lg" loading="lazy" onerror="this.style.display='none'">`
     : `<div class="text-5xl text-center py-2">${p.emoji || '🍽️'}</div>`
 
   return `
-    <div class="card p-4 flex flex-col gap-2 hover:-translate-y-1 hover:shadow-md ${!p.disponivel ? 'opacity-60' : ''}" style="animation-delay:${idx * 50}ms">
-      ${topoCard}
-      <div class="flex items-start justify-between gap-2">
-        <h3 class="font-semibold text-slate-800 dark:text-slate-100 leading-tight">${p.nome}</h3>
-        ${badgeDisp}
-      </div>
-      ${p.descricao ? `<p class="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">${p.descricao}</p>` : ''}
-      <div class="flex items-center justify-between mt-auto pt-2 border-t border-slate-100 dark:border-slate-700">
-        <span class="text-lg font-bold text-orange-600 dark:text-orange-400">
-          R$ ${Number(p.preco).toFixed(2)}
-        </span>
-        <span class="text-xs text-slate-400">${tempo}</span>
+    <div class="card card-prato p-4 flex flex-col gap-2 hover:-translate-y-1 hover:shadow-md ${!p.disponivel ? 'opacity-60' : ''}" style="animation-delay:${idx * 50}ms">
+      <div class="card-prato-img">${imgHtml}</div>
+      <div class="card-prato-texto flex flex-col gap-2">
+        <div class="flex items-start justify-between gap-2">
+          <h3 class="font-semibold text-slate-800 dark:text-slate-100 leading-tight">${p.nome}</h3>
+          ${badgeDisp}
+        </div>
+        ${p.descricao ? `<p class="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">${p.descricao}</p>` : ''}
+        <div class="flex items-center justify-between mt-auto pt-2 border-t border-slate-100 dark:border-slate-700">
+          <span class="text-lg font-bold text-orange-600 dark:text-orange-400">
+            R$ ${Number(p.preco).toFixed(2)}
+          </span>
+          <span class="text-xs text-slate-400">${tempo}</span>
+        </div>
       </div>
     </div>`
 }
