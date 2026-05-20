@@ -223,18 +223,11 @@ async function abrirModal(id = null) {
         <div>
           <label class="text-sm font-medium text-slate-700">Imagem (opcional)</label>
           ${d.imagem_url ? `
-            <div id="imagem-atual-wrapper" class="mb-2 mt-1">
+            <div style="margin-bottom:8px;margin-top:4px">
               <img src="${d.imagem_url}"
-                class="w-full h-24 object-cover rounded-lg border border-slate-200 dark:border-slate-600">
-              <div class="flex items-center justify-between mt-1">
-                <p class="text-xs text-slate-400">Imagem atual</p>
-                <button type="button" id="btn-remover-imagem"
-                  class="text-xs text-red-500 hover:text-red-700 transition-colors flex items-center gap-1">
-                  🗑️ Remover imagem
-                </button>
-              </div>
-            </div>
-            <input type="hidden" id="flag-remover" value="false">` : ''}
+                style="width:100%;height:96px;object-fit:cover;border-radius:8px;border:1px solid #e2e8f0">
+              <p style="font-size:12px;color:#94a3b8;margin-top:4px">Imagem atual</p>
+            </div>` : ''}
           <input id="s-imagem" type="file" accept="image/*"
             class="block w-full mt-1 text-sm text-slate-500 cursor-pointer rounded-lg
                    file:mr-3 file:py-1.5 file:px-4 file:rounded-lg file:border-0
@@ -250,6 +243,13 @@ async function abrirModal(id = null) {
               <div id="progress-bar" class="h-full bg-orange-500 rounded-full transition-all duration-300" style="width:0%"></div>
             </div>
           </div>
+          ${d.imagem_url ? `
+            <div id="area-remover" style="margin-top:8px">
+              <button type="button" id="btn-remover-img"
+                style="background:#dc2626;color:white;border:none;padding:6px 12px;border-radius:8px;cursor:pointer;font-size:13px">
+                🗑️ Remover imagem atual
+              </button>
+            </div>` : ''}
         </div>
         <div>
           <label class="text-sm font-medium text-slate-700">Descrição</label>
@@ -294,16 +294,15 @@ async function abrirModal(id = null) {
         reader.onload = e => { imgEl.src = e.target.result; preview.classList.remove('hidden') }
         reader.readAsDataURL(file)
       })
-      document.getElementById('btn-remover-imagem')?.addEventListener('click', () => {
-        const wrapper = document.getElementById('imagem-atual-wrapper')
-        if (wrapper) wrapper.innerHTML = `
-          <div class="text-center mb-2 py-1">
-            <div class="text-4xl">${d.emoji || '🍽️'}</div>
-            <p class="text-xs text-slate-400 mt-1">Nenhuma imagem — emoji será exibido no lugar</p>
-          </div>`
-        const flag = document.getElementById('flag-remover')
-        if (flag) flag.value = 'true'
-      })
+      window._removerImagem = false
+      const btnRemover = document.getElementById('btn-remover-img')
+      if (btnRemover) {
+        btnRemover.addEventListener('click', () => {
+          document.getElementById('area-remover').innerHTML =
+            '<p style="color:#94a3b8;font-size:13px">✓ Imagem será removida ao salvar</p>'
+          window._removerImagem = true
+        })
+      }
     },
     preConfirm: async () => {
       const nome         = document.getElementById('s-nome').value.trim()
@@ -322,9 +321,8 @@ async function abrirModal(id = null) {
       if (isNaN(preco) || preco < 0) { Swal.showValidationMessage('Preço inválido.'); return false }
 
       let imagem_url = d.imagem_url || null
-      const removerImagem = document.getElementById('flag-remover')?.value === 'true'
 
-      if (removerImagem) {
+      if (window._removerImagem === true) {
         if (d.imagem_url?.includes('/storage/v1/object/public/pratos/')) {
           const path = d.imagem_url.split('/pratos/')[1]
           if (path) await supabase.storage.from('pratos').remove([path]).catch(() => {})
@@ -358,6 +356,7 @@ async function abrirModal(id = null) {
       return { nome, descricao, preco, tempo_preparo: tempoStr ? parseInt(tempoStr) : null, categoria_id, disponivel, emoji, imagem_url }
     },
   })
+  window._removerImagem = false
   if (!value) return
 
   try {
