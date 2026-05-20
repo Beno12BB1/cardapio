@@ -5,6 +5,7 @@ import { renderHeader, setTitulo } from '../ui/header.js'
 import { renderIcons } from '../ui/icons.js'
 import { supabase } from '../supabase.js'
 import { showToast } from '../ui/toast.js'
+import { abrirDropdown } from '../ui/dropdown.js'
 import Swal from 'sweetalert2'
 
 const POR_PAGINA = 10
@@ -84,7 +85,7 @@ async function carregarCategoriasFiltro() {
 }
 
 async function carregar() {
-  document.getElementById('tbody').innerHTML = `<tr><td colspan="6" class="px-4 py-8">
+  document.getElementById('tbody').innerHTML = `<tr><td colspan="7" class="px-4 py-8">
     <div class="space-y-2">
       ${Array(4).fill('<div class="animate-pulse h-10 bg-slate-200 dark:bg-slate-700 rounded-lg w-full"></div>').join('')}
     </div></td></tr>`
@@ -134,20 +135,24 @@ function renderTabela(rows) {
             <span class="text-2xl">${r.emoji || '🍽️'}</span>
             <div>
               <div class="font-medium">${r.nome}</div>
-              ${r.descricao ? `<div class="text-xs text-slate-400 mt-0.5 max-w-xs truncate">${r.descricao}</div>` : ''}
+              ${r.descricao ? `<div class="text-xs text-slate-400 mt-0.5 max-w-xs truncate hidden sm:block">${r.descricao}</div>` : ''}
             </div>
           </div>
         </td>
-        <td class="px-4 py-3 text-slate-600 dark:text-slate-300">${r.categorias?.nome || '—'}</td>
+        <td class="px-4 py-3 text-slate-600 dark:text-slate-300 hidden sm:table-cell">${r.categorias?.nome || '—'}</td>
         <td class="px-4 py-3 font-semibold ${r.disponivel ? 'text-green-600 dark:text-green-400' : 'text-slate-400 dark:text-slate-500'}">
           R$ ${Number(r.preco).toFixed(2)}
         </td>
-        <td class="px-4 py-3 text-slate-600 dark:text-slate-300">${tempo}</td>
-        <td class="px-4 py-3">${badge}</td>
-        <td class="px-4 py-3 text-right space-x-2">
+        <td class="px-4 py-3 text-slate-600 dark:text-slate-300 hidden sm:table-cell">${tempo}</td>
+        <td class="px-4 py-3 hidden sm:table-cell">${badge}</td>
+        <td class="px-4 py-3 text-right space-x-2 hidden sm:table-cell">
           <button onclick="window._editar('${r.id}')" class="btn-secondary text-xs px-3 py-1">Editar</button>
           ${btnToggle}
           <button onclick="window._excluir('${r.id}','${esc(r.nome)}')" class="btn-danger text-xs px-3 py-1">Excluir</button>
+        </td>
+        <td class="px-2 py-3 text-right sm:hidden">
+          <button onclick="window._menuPrato(this,'${r.id}','${esc(r.nome)}',${r.disponivel})"
+            class="w-8 h-8 rounded-full bg-orange-500 hover:bg-orange-600 text-white font-bold text-xl flex items-center justify-center ml-auto transition-colors">⋮</button>
         </td>
       </tr>`
   }).join('')
@@ -287,6 +292,12 @@ window._sortBy = col => {
   })
   pagina = 1; carregar()
 }
+
+window._menuPrato = (btn, id, nome, disponivel) => abrirDropdown(btn, [
+  { label: 'Editar',                                           fn: () => window._editar(id) },
+  { label: disponivel ? 'Tirar do cardápio' : 'Disponibilizar', fn: () => window._toggle(id, !disponivel, nome) },
+  { label: 'Excluir',                                          fn: () => window._excluir(id, nome), perigo: true },
+])
 
 window._editar = id => abrirModal(id)
 

@@ -47,11 +47,12 @@
             <thead class="table-header">
               <tr>
                 <th class="px-4 py-3 text-left cursor-pointer select-none hover:bg-slate-100 dark:hover:bg-slate-600/60 transition-colors" onclick="window._sortBy('nome')">Nome<span data-sort="nome" class="text-slate-400 text-xs"> ↕</span></th>
-                <th class="px-4 py-3 text-left">Categoria</th>
+                <th class="px-4 py-3 text-left hidden sm:table-cell">Categoria</th>
                 <th class="px-4 py-3 text-left cursor-pointer select-none hover:bg-slate-100 dark:hover:bg-slate-600/60 transition-colors" onclick="window._sortBy('preco')">Preço<span data-sort="preco" class="text-slate-400 text-xs"> ↕</span></th>
-                <th class="px-4 py-3 text-left">Tempo</th>
-                <th class="px-4 py-3 text-left">Situação</th>
-                <th class="px-4 py-3 text-right">Ações</th>
+                <th class="px-4 py-3 text-left hidden sm:table-cell">Tempo</th>
+                <th class="px-4 py-3 text-left hidden sm:table-cell">Situação</th>
+                <th class="px-4 py-3 text-right hidden sm:table-cell">Ações</th>
+                <th class="px-2 py-3 sm:hidden"></th>
               </tr>
             </thead>
             <tbody id="tbody"></tbody>

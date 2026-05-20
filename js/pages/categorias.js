@@ -5,6 +5,7 @@ import { renderHeader, setTitulo } from '../ui/header.js'
 import { renderIcons } from '../ui/icons.js'
 import { supabase } from '../supabase.js'
 import { showToast } from '../ui/toast.js'
+import { abrirDropdown } from '../ui/dropdown.js'
 import Swal from 'sweetalert2'
 
 const POR_PAGINA = 10
@@ -59,7 +60,7 @@ async function init() {
 }
 
 async function carregar() {
-  document.getElementById('tbody').innerHTML = `<tr><td colspan="4" class="px-4 py-8">
+  document.getElementById('tbody').innerHTML = `<tr><td colspan="5" class="px-4 py-8">
     <div class="space-y-2">
       ${Array(4).fill('<div class="animate-pulse h-10 bg-slate-200 dark:bg-slate-700 rounded-lg w-full"></div>').join('')}
     </div></td></tr>`
@@ -85,7 +86,7 @@ function renderTabela(rows) {
   const tbody = document.getElementById('tbody')
   if (!rows.length) {
     tbody.innerHTML = `
-      <tr><td colspan="4" class="px-4 py-10 text-center text-slate-400">
+      <tr><td colspan="5" class="px-4 py-10 text-center text-slate-400">
         Nenhuma categoria encontrada.
       </td></tr>`
     return
@@ -100,12 +101,16 @@ function renderTabela(rows) {
     return `
       <tr class="table-row">
         <td class="px-4 py-3 font-medium">${r.nome}</td>
-        <td class="px-4 py-3 text-slate-500 dark:text-slate-400">${r.descricao || '—'}</td>
-        <td class="px-4 py-3">${badge}</td>
-        <td class="px-4 py-3 text-right space-x-2">
+        <td class="px-4 py-3 text-slate-500 dark:text-slate-400 hidden sm:table-cell">${r.descricao || '—'}</td>
+        <td class="px-4 py-3 hidden sm:table-cell">${badge}</td>
+        <td class="px-4 py-3 text-right space-x-2 hidden sm:table-cell">
           <button onclick="window._editar('${r.id}')" class="btn-secondary text-xs px-3 py-1">Editar</button>
           <button onclick="window._excluir('${r.id}','${esc(r.nome)}')" class="btn-danger text-xs px-3 py-1">Excluir</button>
           ${btnToggle}
+        </td>
+        <td class="px-2 py-3 text-right sm:hidden">
+          <button onclick="window._menuCat(this,'${r.id}','${esc(r.nome)}',${r.ativo})"
+            class="w-8 h-8 rounded-full bg-orange-500 hover:bg-orange-600 text-white font-bold text-xl flex items-center justify-center ml-auto transition-colors">⋮</button>
         </td>
       </tr>`
   }).join('')
@@ -164,6 +169,12 @@ window._sortBy = col => {
   })
   pagina = 1; carregar()
 }
+
+window._menuCat = (btn, id, nome, ativo) => abrirDropdown(btn, [
+  { label: 'Editar',                        fn: () => window._editar(id) },
+  { label: ativo ? 'Inativar' : 'Reativar', fn: () => window._toggle(id, !ativo, nome), perigo: ativo },
+  { label: 'Excluir',                       fn: () => window._excluir(id, nome), perigo: true },
+])
 
 window._editar = id => abrirModal(id)
 
