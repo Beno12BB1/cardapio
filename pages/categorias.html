@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <style>body{visibility:hidden}</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Categorias — Cardápio Digital</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="bg-slate-100 dark:bg-slate-900 text-slate-900 dark:text-slate-100">
+<div class="flex h-screen overflow-hidden">
+  <div id="sidebar"></div>
+  <div class="flex-1 flex flex-col overflow-hidden">
+    <div id="header"></div>
+    <main class="flex-1 overflow-y-auto p-6 space-y-4">
+
+      <!-- Filtros e botão novo -->
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <form id="form-busca" class="flex gap-2">
+          <input id="input-busca" type="text" placeholder="Buscar categoria..."
+            class="input-field max-w-xs">
+          <select id="filtro-ativo" class="input-field w-auto">
+            <option value="">Todas</option>
+            <option value="true">Ativas</option>
+            <option value="false">Inativas</option>
+          </select>
+          <button type="submit" class="btn-secondary px-3">
+            <span data-heroicon="magnifying-glass"></span>
+          </button>
+          <button type="button" id="btn-limpar" class="btn-secondary px-3">Limpar</button>
+        </form>
+        <button id="btn-nova" class="btn-primary shrink-0">
+          <span data-heroicon="plus"></span> Nova Categoria
+        </button>
+      </div>
+
+      <!-- Tabela -->
+      <div class="card p-0 overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead class="table-header">
+              <tr>
+                <th class="px-4 py-3 text-left">Nome</th>
+                <th class="px-4 py-3 text-left">Descrição</th>
+                <th class="px-4 py-3 text-left">Situação</th>
+                <th class="px-4 py-3 text-right">Ações</th>
+              </tr>
+            </thead>
+            <tbody id="tbody"></tbody>
+          </table>
+        </div>
+        <!-- Paginação -->
+        <div class="flex items-center justify-between px-4 py-3 border-t border-slate-100 dark:border-slate-700">
+          <button id="btn-anterior" class="btn-secondary text-xs px-3 py-1.5">
+            <span data-heroicon="chevron-left"></span> Anterior
+          </button>
+          <span id="info-pagina" class="text-sm text-slate-500 dark:text-slate-400">
+            Página 1 de 1
+          </span>
+          <button id="btn-proxima" class="btn-secondary text-xs px-3 py-1.5">
+            Próxima <span data-heroicon="chevron-right"></span>
+          </button>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+<script>if(!localStorage.getItem('sb-wvjwwstxvhzywqsbgvjx-auth-token'))window.location.href='/cardapio/login.html'</script>
+<script type="module" src="/js/pages/categorias.js"></script>
+</body>
+</html>

@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cardápio Digital</title>
+  <script type="module">
+    import { verificarAutenticacao } from '/js/auth.js'
+    const BASE = import.meta.env.BASE_URL
+    verificarAutenticacao().then(u => {
+      if (u) window.location.href = BASE + 'pages/dashboard.html'
+    })
+  </script>
+</head>
+<body class="bg-slate-50 flex items-center justify-center h-screen">
+  <p class="text-slate-400 text-sm">Redirecionando...</p>
+</body>
+</html>

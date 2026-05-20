@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <style>body{visibility:hidden}</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cardápio — Cardápio Digital</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="bg-slate-100 dark:bg-slate-900 text-slate-900 dark:text-slate-100">
+<div class="flex h-screen overflow-hidden">
+  <div id="sidebar"></div>
+  <div class="flex-1 flex flex-col overflow-hidden">
+    <div id="header"></div>
+    <main class="flex-1 overflow-y-auto p-6 space-y-6">
+
+      <!-- Busca e filtro -->
+      <div class="flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between no-print">
+        <div class="flex gap-2">
+          <input id="input-busca" type="text" placeholder="Buscar prato..."
+            class="input-field max-w-xs">
+          <button id="btn-buscar" class="btn-secondary px-3">
+            <span data-heroicon="magnifying-glass"></span>
+          </button>
+          <button id="btn-limpar" class="btn-secondary px-3">Limpar</button>
+        </div>
+        <div class="flex items-center gap-3">
+          <div class="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
+            <span data-heroicon="book-open" class="text-orange-500"></span>
+            <span id="total-pratos">Carregando...</span>
+          </div>
+          <button id="btn-imprimir" class="btn-secondary px-3 py-2 text-sm">
+            🖨️ PDF
+          </button>
+        </div>
+      </div>
+
+      <!-- Filtro por categoria (pills) -->
+      <div id="pills-categorias" class="flex flex-wrap gap-2 no-print"></div>
+
+      <!-- Conteúdo do cardápio -->
+      <div id="conteudo-cardapio" class="space-y-8"></div>
+
+    </main>
+  </div>
+</div>
+<script>if(!localStorage.getItem('sb-wvjwwstxvhzywqsbgvjx-auth-token'))window.location.href='/cardapio/login.html'</script>
+<script type="module" src="/js/pages/cardapio.js"></script>
+</body>
+</html>

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <style>body{visibility:hidden}</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard — Cardápio Digital</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="bg-slate-100 dark:bg-slate-900 text-slate-900 dark:text-slate-100">
+<div class="flex h-screen overflow-hidden">
+  <div id="sidebar"></div>
+  <div class="flex-1 flex flex-col overflow-hidden">
+    <div id="header"></div>
+    <main class="flex-1 overflow-y-auto p-6 space-y-6">
+
+      <!-- Boas-vindas -->
+      <div id="boas-vindas"></div>
+
+      <!-- Cards de resumo -->
+      <div id="cards" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+        <div class="card animate-pulse h-24"></div>
+        <div class="card animate-pulse h-24"></div>
+        <div class="card animate-pulse h-24"></div>
+        <div class="card animate-pulse h-24"></div>
+      </div>
+
+      <!-- Pratos recentes -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+        <div class="card">
+          <h2 class="text-base font-semibold mb-4">Últimos Pratos Cadastrados</h2>
+          <div class="space-y-3" id="lista-pratos-recentes">
+            <p class="text-slate-400 text-sm">Carregando...</p>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2 class="text-base font-semibold mb-4">Categorias Ativas</h2>
+          <div class="space-y-2" id="lista-categorias">
+            <p class="text-slate-400 text-sm">Carregando...</p>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+</div>
+<script>if(!localStorage.getItem('sb-wvjwwstxvhzywqsbgvjx-auth-token'))window.location.href='/cardapio/login.html'</script>
+<script type="module" src="/js/pages/dashboard.js"></script>
+</body>
+</html>

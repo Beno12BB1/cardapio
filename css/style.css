@@ -1,0 +1,39 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@layer base {
+  html { font-family: 'Inter', system-ui, sans-serif; }
+}
+
+@layer components {
+  .btn-primary   { @apply bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg font-medium transition-colors inline-flex items-center gap-2 cursor-pointer disabled:opacity-50; }
+  .btn-secondary { @apply bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 px-4 py-2 rounded-lg font-medium transition-colors inline-flex items-center gap-2 cursor-pointer; }
+  .btn-danger    { @apply bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium transition-colors inline-flex items-center gap-2 cursor-pointer; }
+  .btn-success   { @apply bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium transition-colors inline-flex items-center gap-2 cursor-pointer; }
+
+  .input-field   { @apply border border-slate-300 dark:border-slate-600 rounded-lg px-3 py-2 w-full bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-orange-400; }
+  .card          { @apply bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 p-6; animation: fadeInUp 0.3s ease both; }
+
+  .table-header  { @apply bg-slate-50 dark:bg-slate-700/60 text-slate-500 dark:text-slate-400 text-xs font-semibold uppercase tracking-wide; }
+  .table-row     { @apply border-b border-slate-100 dark:border-slate-700 hover:bg-orange-50 dark:hover:bg-slate-700/40 transition-colors; }
+
+  .badge-ativo        { @apply bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300 px-2 py-0.5 rounded-full text-xs font-medium; }
+  .badge-inativo      { @apply bg-red-100   text-red-700   dark:bg-red-900/40   dark:text-red-300   px-2 py-0.5 rounded-full text-xs font-medium; }
+  .badge-disponivel   { @apply bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300 px-2 py-0.5 rounded-full text-xs font-medium; }
+  .badge-indisponivel { @apply bg-slate-100 text-slate-500 dark:bg-slate-700 dark:text-slate-400 px-2 py-0.5 rounded-full text-xs font-medium; }
+}
+
+@media print {
+  #sidebar, #header, .no-print { display: none !important; }
+  body { background: white !important; visibility: visible !important; }
+  .flex.h-screen { display: block; }
+  main { overflow: visible !important; }
+  .card { box-shadow: none !important; border: 1px solid #e2e8f0 !important; animation: none !important; break-inside: avoid; }
+}
