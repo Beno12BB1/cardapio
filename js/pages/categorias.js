@@ -91,7 +91,7 @@ function renderTabela(rows) {
       </td></tr>`
     return
   }
-  tbody.innerHTML = rows.map(r => {
+  tbody.innerHTML = rows.map((r, i) => {
     const badge = r.ativo
       ? '<span class="badge-ativo">Ativa</span>'
       : '<span class="badge-inativo">Inativa</span>'
@@ -99,7 +99,7 @@ function renderTabela(rows) {
       ? `<button onclick="window._toggle('${r.id}',false,'${esc(r.nome)}')" class="btn-danger text-xs px-3 py-1">Inativar</button>`
       : `<button onclick="window._toggle('${r.id}',true,'${esc(r.nome)}')"  class="btn-success text-xs px-3 py-1">Reativar</button>`
     return `
-      <tr class="table-row">
+      <tr class="table-row" style="animation:fadeInUp 0.3s ease both;animation-delay:${i * 50}ms">
         <td class="px-4 py-3 font-medium">${r.nome}</td>
         <td class="px-4 py-3 text-slate-500 dark:text-slate-400 hidden sm:table-cell">${r.descricao || '—'}</td>
         <td class="px-4 py-3 hidden sm:table-cell">${badge}</td>

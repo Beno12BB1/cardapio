@@ -33,6 +33,11 @@ document.getElementById('form-login').addEventListener('submit', async e => {
       icon: 'error', title: 'Erro ao entrar',
       text: err.message.includes('Invalid') ? 'E-mail ou senha incorretos.' : err.message,
     })
+    const form = document.getElementById('form-login')
+    form.classList.remove('shake')
+    void form.offsetWidth
+    form.classList.add('shake')
+    form.addEventListener('animationend', () => form.classList.remove('shake'), { once: true })
   } finally {
     btn.disabled = false; btn.textContent = 'Entrar'
   }
@@ -78,6 +83,19 @@ document.getElementById('form-login').addEventListener('submit', async e => {
   cadEmail.addEventListener('input', verificarCampos)
   cadConfirma.addEventListener('input', verificarCampos)
 }
+
+// Ripple effect nos botões
+document.addEventListener('click', e => {
+  const btn = e.target.closest('.btn-primary, .btn-danger')
+  if (!btn) return
+  const rect = btn.getBoundingClientRect()
+  const size = Math.max(rect.width, rect.height)
+  const r = document.createElement('span')
+  r.className = 'ripple'
+  r.style.cssText = `width:${size}px;height:${size}px;left:${e.clientX - rect.left - size / 2}px;top:${e.clientY - rect.top - size / 2}px`
+  btn.appendChild(r)
+  r.addEventListener('animationend', () => r.remove())
+}, true)
 
 // === CADASTRO ===
 document.getElementById('form-cadastro').addEventListener('submit', async e => {

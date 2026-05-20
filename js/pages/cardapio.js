@@ -35,6 +35,11 @@ async function init() {
     renderCardapio()
   })
   document.getElementById('btn-imprimir').addEventListener('click', () => window.print())
+  document.getElementById('btn-float-busca')?.addEventListener('click', () => {
+    const input = document.getElementById('input-busca')
+    input.focus()
+    input.scrollIntoView({ behavior: 'smooth', block: 'center' })
+  })
   document.body.style.visibility = 'visible'
 }
 
@@ -168,7 +173,7 @@ function cartaoPrato(p, idx = 0) {
     : '<span class="badge-indisponivel">Indisponível</span>'
 
   return `
-    <div class="card p-4 flex flex-col gap-2 ${!p.disponivel ? 'opacity-60' : ''}" style="animation-delay:${idx * 50}ms">
+    <div class="card p-4 flex flex-col gap-2 hover:-translate-y-1 hover:shadow-md ${!p.disponivel ? 'opacity-60' : ''}" style="animation-delay:${idx * 50}ms">
       <div class="text-4xl text-center py-1">${p.emoji || '🍽️'}</div>
       <div class="flex items-start justify-between gap-2">
         <h3 class="font-semibold text-slate-800 dark:text-slate-100 leading-tight">${p.nome}</h3>

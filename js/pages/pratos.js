@@ -119,7 +119,7 @@ function renderTabela(rows) {
     return
   }
 
-  tbody.innerHTML = rows.map(r => {
+  tbody.innerHTML = rows.map((r, i) => {
     const badge = r.disponivel
       ? '<span class="badge-disponivel">Disponível</span>'
       : '<span class="badge-indisponivel">Indisponível</span>'
@@ -129,7 +129,7 @@ function renderTabela(rows) {
     const tempo = r.tempo_preparo ? `${r.tempo_preparo} min` : '—'
 
     return `
-      <tr class="table-row">
+      <tr class="table-row" style="animation:fadeInUp 0.3s ease both;animation-delay:${i * 50}ms">
         <td class="px-4 py-3">
           <div class="flex items-center gap-2">
             <span class="text-2xl">${r.emoji || '🍽️'}</span>

@@ -12,12 +12,13 @@ const NAV = [
 ]
 
 function buildLinks(paginaAtiva) {
-  return NAV.map(item => {
+  return NAV.map((item, idx) => {
     const ativo = item.key === paginaAtiva
     return `
       <a href="${BASE + item.href}"
-        class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors
-          ${ativo ? 'bg-orange-500 text-white' : 'text-slate-300 hover:bg-slate-700 hover:text-white'}">
+        class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors slide-in-left
+          ${ativo ? 'bg-orange-500 text-white' : 'text-slate-300 hover:bg-slate-700 hover:text-white'}"
+        style="animation-delay:${idx * 80}ms">
         ${heroicon(item.icon)}
         <span>${item.label}</span>
         ${item.key === 'cardapio'

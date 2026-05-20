@@ -43,8 +43,29 @@ export function renderHeader(usuario) {
   document.getElementById('btn-tema')?.addEventListener('click', () => {
     const dark = document.documentElement.classList.toggle('dark')
     localStorage.setItem('tema', dark ? 'dark' : 'light')
-    document.getElementById('icone-tema').innerHTML = heroicon(dark ? 'sun' : 'moon')
+    const iconEl = document.getElementById('icone-tema')
+    iconEl.style.display = 'inline-block'
+    iconEl.classList.remove('spin-once')
+    void iconEl.offsetWidth
+    iconEl.classList.add('spin-once')
+    iconEl.addEventListener('animationend', () => iconEl.classList.remove('spin-once'), { once: true })
+    iconEl.innerHTML = heroicon(dark ? 'sun' : 'moon')
   })
+
+  if (!window._rippleReady) {
+    window._rippleReady = true
+    document.addEventListener('click', e => {
+      const btn = e.target.closest('.btn-primary, .btn-danger')
+      if (!btn) return
+      const rect = btn.getBoundingClientRect()
+      const size = Math.max(rect.width, rect.height)
+      const r = document.createElement('span')
+      r.className = 'ripple'
+      r.style.cssText = `width:${size}px;height:${size}px;left:${e.clientX - rect.left - size / 2}px;top:${e.clientY - rect.top - size / 2}px`
+      btn.appendChild(r)
+      r.addEventListener('animationend', () => r.remove())
+    }, true)
+  }
 
   if (!document.getElementById('btn-top')) {
     const btn = document.createElement('button')

@@ -74,10 +74,26 @@ function renderCards(totalPratos, disponiveis, totalCats, catsAtivas) {
     <div class="card flex items-center gap-4">
       <div class="p-3 rounded-xl ${c.cor} text-white shrink-0">${heroicon(c.icon, 'w-6 h-6')}</div>
       <div>
-        <div class="text-3xl font-bold text-slate-800 dark:text-slate-100">${c.valor ?? 0}</div>
+        <div class="text-3xl font-bold text-slate-800 dark:text-slate-100" data-counter="${c.valor ?? 0}">0</div>
         <div class="text-sm text-slate-500 dark:text-slate-400">${c.label}</div>
       </div>
     </div>`).join('')
+  animarContadores()
+}
+
+function animarContadores() {
+  document.querySelectorAll('[data-counter]').forEach(el => {
+    const destino = parseInt(el.dataset.counter) || 0
+    if (!destino) { el.textContent = '0'; return }
+    const inicio = performance.now()
+    const dur = 900
+    const tick = (t) => {
+      const prog = Math.min((t - inicio) / dur, 1)
+      el.textContent = Math.round((1 - Math.pow(1 - prog, 3)) * destino)
+      if (prog < 1) requestAnimationFrame(tick)
+    }
+    requestAnimationFrame(tick)
+  })
 }
 
 function renderPratosRecentes(pratos) {

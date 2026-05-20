@@ -3,26 +3,71 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ── Keyframes ──────────────────────────────────────── */
 @keyframes fadeInUp {
   from { opacity: 0; transform: translateY(10px); }
   to   { opacity: 1; transform: translateY(0); }
 }
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(32px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateX(-16px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  15%      { transform: translateX(-8px); }
+  35%      { transform: translateX(8px); }
+  55%      { transform: translateX(-5px); }
+  75%      { transform: translateX(5px); }
+  90%      { transform: translateX(-2px); }
+}
+@keyframes spin360 {
+  to { transform: rotate(360deg); }
+}
+@keyframes ripple-anim {
+  to { transform: scale(4); opacity: 0; }
+}
 
+/* ── Base ────────────────────────────────────────────── */
 @layer base {
   html { font-family: 'Inter', system-ui, sans-serif; }
 }
 
+/* ── Components ──────────────────────────────────────── */
 @layer components {
-  .btn-primary   { @apply bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg font-medium transition-colors inline-flex items-center gap-2 cursor-pointer disabled:opacity-50; }
+  .btn-primary {
+    @apply bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg font-medium
+           inline-flex items-center gap-2 cursor-pointer disabled:opacity-50
+           relative overflow-hidden select-none;
+    transition: background-color 0.15s ease, transform 0.1s ease;
+  }
+  .btn-primary:active { transform: scale(0.95); }
+
   .btn-secondary { @apply bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 px-4 py-2 rounded-lg font-medium transition-colors inline-flex items-center gap-2 cursor-pointer; }
-  .btn-danger    { @apply bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium transition-colors inline-flex items-center gap-2 cursor-pointer; }
-  .btn-success   { @apply bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium transition-colors inline-flex items-center gap-2 cursor-pointer; }
 
-  .input-field   { @apply border border-slate-300 dark:border-slate-600 rounded-lg px-3 py-2 w-full bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-orange-400; }
-  .card          { @apply bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 p-6; animation: fadeInUp 0.3s ease both; }
+  .btn-danger {
+    @apply bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium
+           inline-flex items-center gap-2 cursor-pointer
+           relative overflow-hidden select-none;
+    transition: background-color 0.15s ease, transform 0.1s ease;
+  }
+  .btn-danger:active { transform: scale(0.95); }
 
-  .table-header  { @apply bg-slate-50 dark:bg-slate-700/60 text-slate-500 dark:text-slate-400 text-xs font-semibold uppercase tracking-wide; }
-  .table-row     { @apply border-b border-slate-100 dark:border-slate-700 hover:bg-orange-50 dark:hover:bg-slate-700/40 transition-colors; }
+  .btn-success { @apply bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium transition-colors inline-flex items-center gap-2 cursor-pointer; }
+
+  .input-field { @apply border border-slate-300 dark:border-slate-600 rounded-lg px-3 py-2 w-full bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-orange-400; }
+
+  .card {
+    @apply bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 p-6;
+    animation: fadeInUp 0.3s ease both;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .table-header { @apply bg-slate-50 dark:bg-slate-700/60 text-slate-500 dark:text-slate-400 text-xs font-semibold uppercase tracking-wide; }
+  .table-row    { @apply border-b border-slate-100 dark:border-slate-700 hover:bg-orange-50 dark:hover:bg-slate-700/40 transition-colors; }
 
   .badge-ativo        { @apply bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300 px-2 py-0.5 rounded-full text-xs font-medium; }
   .badge-inativo      { @apply bg-red-100   text-red-700   dark:bg-red-900/40   dark:text-red-300   px-2 py-0.5 rounded-full text-xs font-medium; }
@@ -30,10 +75,32 @@
   .badge-indisponivel { @apply bg-slate-100 text-slate-500 dark:bg-slate-700 dark:text-slate-400 px-2 py-0.5 rounded-full text-xs font-medium; }
 }
 
+/* ── Utility animations ──────────────────────────────── */
+.shake         { animation: shake 0.45s ease; }
+.slide-up      { animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.slide-in-left { animation: slideInLeft 0.3s ease both; }
+.spin-once     { animation: spin360 0.4s ease; }
+
+.ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.35);
+  transform: scale(0);
+  animation: ripple-anim 0.55s ease-out;
+  pointer-events: none;
+}
+
+/* ── SweetAlert2: blur background ───────────────────── */
+body.swal2-shown .flex.h-screen {
+  filter: blur(4px);
+  transition: filter 0.2s ease;
+}
+
+/* ── Print ───────────────────────────────────────────── */
 @media print {
   #sidebar, #header, .no-print { display: none !important; }
   body { background: white !important; visibility: visible !important; }
-  .flex.h-screen { display: block; }
+  .flex.h-screen { display: block; filter: none !important; }
   main { overflow: visible !important; }
   .card { box-shadow: none !important; border: 1px solid #e2e8f0 !important; animation: none !important; break-inside: avoid; }
 }
