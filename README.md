@@ -37,8 +37,8 @@ Sistema web completo de gestão de cardápio para restaurantes, desenvolvido com
 
 ```bash
 # 1. Clone o repositório
-git clone https://github.com/Beno12BB1/cardapiio.git
-cd cardapiio
+git clone https://github.com/Beno12BB1/cardapio.git
+cd cardapio
 
 # 2. Instale as dependências
 npm install
@@ -64,7 +64,7 @@ VITE_SUPABASE_KEY=sua_anon_key_aqui
 npm run dev
 ```
 
-Acesse: [http://localhost:5173/cardapiio/](http://localhost:5173/cardapiio/)
+Acesse: [http://localhost:5173/cardapio/](http://localhost:5173/cardapio/)
 
 ## 📦 Build e Deploy
 
@@ -78,7 +78,7 @@ npm run deploy
 
 ## 🌐 Link do Projeto
 
-**[https://beno12bb1.github.io/cardapiio/](https://beno12bb1.github.io/cardapiio/)**
+**[https://beno12bb1.github.io/cardapio/](https://beno12bb1.github.io/cardapio/)**
 
 ## 👥 Integrantes do Grupo
 
