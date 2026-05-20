@@ -60,7 +60,12 @@ async function carregarTudo() {
 
     if (error) throw error
     todosOsPratos = data || []
-    animarContador(todosOsPratos.filter(p => p.disponivel).length)
+    const disponiveisList = todosOsPratos.filter(p => p.disponivel)
+    animarContador(disponiveisList.length)
+    const media = disponiveisList.length
+      ? disponiveisList.reduce((s, p) => s + Number(p.preco), 0) / disponiveisList.length : 0
+    const elMedia = document.getElementById('preco-medio')
+    if (elMedia) elMedia.textContent = media > 0 ? `R$ ${media.toFixed(2)}` : '—'
     renderPills()
     renderCardapio()
   } catch (err) {
@@ -139,6 +144,7 @@ function renderCardapio() {
     grupos[catNome].push(p)
   })
 
+  let cardIdx = 0
   container.innerHTML = Object.entries(grupos)
     .sort(([a], [b]) => a.localeCompare(b))
     .map(([catNome, pratos]) => `
@@ -149,20 +155,20 @@ function renderCardapio() {
           <span class="text-xs text-slate-400">${pratos.length} item${pratos.length !== 1 ? 's' : ''}</span>
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-          ${pratos.map(p => cartaoPrato(p)).join('')}
+          ${pratos.map(p => cartaoPrato(p, cardIdx++)).join('')}
         </div>
       </div>`
     ).join('')
 }
 
-function cartaoPrato(p) {
+function cartaoPrato(p, idx = 0) {
   const tempo = p.tempo_preparo ? `⏱ ${p.tempo_preparo} min` : ''
   const badgeDisp = p.disponivel
     ? '<span class="badge-disponivel">Disponível</span>'
     : '<span class="badge-indisponivel">Indisponível</span>'
 
   return `
-    <div class="card p-4 flex flex-col gap-2 ${!p.disponivel ? 'opacity-60' : ''}">
+    <div class="card p-4 flex flex-col gap-2 ${!p.disponivel ? 'opacity-60' : ''}" style="animation-delay:${idx * 50}ms">
       <div class="text-4xl text-center py-1">${p.emoji || '🍽️'}</div>
       <div class="flex items-start justify-between gap-2">
         <h3 class="font-semibold text-slate-800 dark:text-slate-100 leading-tight">${p.nome}</h3>

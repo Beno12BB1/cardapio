@@ -25,20 +25,28 @@
         <div class="card animate-pulse h-24"></div>
       </div>
 
+      <!-- Cards de estatísticas -->
+      <div id="cards-stats" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+        <div class="card animate-pulse h-20"></div>
+        <div class="card animate-pulse h-20"></div>
+        <div class="card animate-pulse h-20"></div>
+        <div class="card animate-pulse h-20"></div>
+      </div>
+
       <!-- Pratos recentes -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
         <div class="card">
           <h2 class="text-base font-semibold mb-4">Últimos Pratos Cadastrados</h2>
           <div class="space-y-3" id="lista-pratos-recentes">
-            <p class="text-slate-400 text-sm">Carregando...</p>
+            ${Array(3).fill('<div class="animate-pulse h-12 bg-slate-200 dark:bg-slate-700 rounded-lg"></div>').join('')}
           </div>
         </div>
 
         <div class="card">
           <h2 class="text-base font-semibold mb-4">Categorias Ativas</h2>
           <div class="space-y-2" id="lista-categorias">
-            <p class="text-slate-400 text-sm">Carregando...</p>
+            ${Array(3).fill('<div class="animate-pulse h-8 bg-slate-200 dark:bg-slate-700 rounded-lg"></div>').join('')}
           </div>
         </div>
 

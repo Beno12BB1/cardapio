@@ -4,11 +4,14 @@ import { renderSidebar } from '../ui/sidebar.js'
 import { renderHeader, setTitulo } from '../ui/header.js'
 import { renderIcons } from '../ui/icons.js'
 import { supabase } from '../supabase.js'
+import { showToast } from '../ui/toast.js'
 import Swal from 'sweetalert2'
 
 const POR_PAGINA = 10
 let pagina = 1, totalPaginas = 1
 let busca = '', filtroCategoria = '', filtroDisponivel = ''
+let sortCol = 'nome', sortDir = 'asc'
+let buscaTimer
 
 const esc = s => (s || '').replace(/'/g, "\\'")
 
@@ -23,11 +26,27 @@ async function init() {
   await carregarCategoriasFiltro()
 
   document.getElementById('btn-novo').addEventListener('click', () => abrirModal())
+  document.getElementById('btn-exportar').addEventListener('click', exportarCSV)
 
   document.getElementById('form-busca').addEventListener('submit', e => {
     e.preventDefault()
     busca            = document.getElementById('input-busca').value.trim()
     filtroCategoria  = document.getElementById('filtro-categoria').value
+    filtroDisponivel = document.getElementById('filtro-disponivel').value
+    pagina = 1; carregar()
+  })
+
+  document.getElementById('input-busca').addEventListener('input', e => {
+    clearTimeout(buscaTimer)
+    buscaTimer = setTimeout(() => { busca = e.target.value.trim(); pagina = 1; carregar() }, 300)
+  })
+
+  document.getElementById('filtro-categoria').addEventListener('change', () => {
+    filtroCategoria = document.getElementById('filtro-categoria').value
+    pagina = 1; carregar()
+  })
+
+  document.getElementById('filtro-disponivel').addEventListener('change', () => {
     filtroDisponivel = document.getElementById('filtro-disponivel').value
     pagina = 1; carregar()
   })
@@ -65,12 +84,16 @@ async function carregarCategoriasFiltro() {
 }
 
 async function carregar() {
-  const inicio = (pagina - 1) * POR_PAGINA
+  document.getElementById('tbody').innerHTML = `<tr><td colspan="6" class="px-4 py-8">
+    <div class="space-y-2">
+      ${Array(4).fill('<div class="animate-pulse h-10 bg-slate-200 dark:bg-slate-700 rounded-lg w-full"></div>').join('')}
+    </div></td></tr>`
 
+  const inicio = (pagina - 1) * POR_PAGINA
   let q = supabase
     .from('pratos')
     .select('id, nome, descricao, preco, tempo_preparo, disponivel, emoji, categorias(id, nome)', { count: 'exact' })
-    .order('nome')
+    .order(sortCol, { ascending: sortDir === 'asc' })
 
   if (busca)            q = q.ilike('nome', `%${busca}%`)
   if (filtroCategoria)  q = q.eq('categoria_id', filtroCategoria)
@@ -99,11 +122,9 @@ function renderTabela(rows) {
     const badge = r.disponivel
       ? '<span class="badge-disponivel">Disponível</span>'
       : '<span class="badge-indisponivel">Indisponível</span>'
-
     const btnToggle = r.disponivel
       ? `<button onclick="window._toggle('${r.id}',false,'${esc(r.nome)}')" class="btn-danger text-xs px-3 py-1">Tirar</button>`
       : `<button onclick="window._toggle('${r.id}',true,'${esc(r.nome)}')"  class="btn-success text-xs px-3 py-1">Disponibilizar</button>`
-
     const tempo = r.tempo_preparo ? `${r.tempo_preparo} min` : '—'
 
     return `
@@ -132,8 +153,35 @@ function renderTabela(rows) {
   }).join('')
 }
 
+async function exportarCSV() {
+  const { data, error } = await supabase
+    .from('pratos')
+    .select('nome, preco, tempo_preparo, disponivel, categorias(nome)')
+    .order('nome')
+
+  if (error || !data?.length) { showToast('Nenhum prato para exportar.', 'warning'); return }
+
+  const bom = '﻿'
+  const header = 'Nome,Categoria,Preço (R$),Tempo (min),Disponível\n'
+  const rows = data.map(p => [
+    `"${p.nome}"`,
+    `"${p.categorias?.nome || ''}"`,
+    Number(p.preco).toFixed(2).replace('.', ','),
+    p.tempo_preparo || '',
+    p.disponivel ? 'Sim' : 'Não',
+  ].join(',')).join('\n')
+
+  const blob = new Blob([bom + header + rows], { type: 'text/csv;charset=utf-8;' })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = `pratos-${new Date().toISOString().slice(0, 10)}.csv`
+  a.click()
+  URL.revokeObjectURL(url)
+  showToast('CSV exportado com sucesso!')
+}
+
 async function abrirModal(id = null) {
-  // Buscar categorias para o select
   const { data: cats } = await supabase
     .from('categorias').select('id, nome').eq('ativo', true).order('nome')
 
@@ -142,7 +190,6 @@ async function abrirModal(id = null) {
     return
   }
 
-  // Buscar dados atuais se for edição
   let d = { nome: '', descricao: '', preco: '', tempo_preparo: '', disponivel: true, categoria_id: '', emoji: '🍽️' }
   if (id) {
     const { data } = await supabase.from('pratos').select('*').eq('id', id).single()
@@ -158,39 +205,31 @@ async function abrirModal(id = null) {
     width: 500,
     html: `
       <div class="text-left space-y-3 mt-2">
-
         <div class="grid grid-cols-[1fr_80px] gap-3">
           <div>
             <label class="text-sm font-medium text-slate-700">Nome *</label>
-            <input id="s-nome" class="input-field mt-1" placeholder="Ex: Pizza Margherita"
-              value="${d.nome}">
+            <input id="s-nome" class="input-field mt-1" placeholder="Ex: Pizza Margherita" value="${d.nome}">
           </div>
           <div>
             <label class="text-sm font-medium text-slate-700">Emoji</label>
-            <input id="s-emoji" class="input-field mt-1 text-center text-xl" placeholder="🍽️"
-              value="${d.emoji || '🍽️'}">
+            <input id="s-emoji" class="input-field mt-1 text-center text-xl" placeholder="🍽️" value="${d.emoji || '🍽️'}">
           </div>
         </div>
-
         <div>
           <label class="text-sm font-medium text-slate-700">Descrição</label>
           <textarea id="s-desc" class="input-field mt-1 resize-none" rows="2"
             placeholder="Ingredientes, detalhes do prato...">${d.descricao || ''}</textarea>
         </div>
-
         <div class="grid grid-cols-2 gap-3">
           <div>
             <label class="text-sm font-medium text-slate-700">Preço (R$) *</label>
-            <input id="s-preco" type="number" min="0" step="0.01"
-              class="input-field mt-1" placeholder="0,00" value="${d.preco || ''}">
+            <input id="s-preco" type="number" min="0" step="0.01" class="input-field mt-1" placeholder="0,00" value="${d.preco || ''}">
           </div>
           <div>
             <label class="text-sm font-medium text-slate-700">Tempo de preparo (min)</label>
-            <input id="s-tempo" type="number" min="1"
-              class="input-field mt-1" placeholder="Ex: 30" value="${d.tempo_preparo || ''}">
+            <input id="s-tempo" type="number" min="1" class="input-field mt-1" placeholder="Ex: 30" value="${d.tempo_preparo || ''}">
           </div>
         </div>
-
         <div>
           <label class="text-sm font-medium text-slate-700">Categoria *</label>
           <select id="s-cat" class="input-field mt-1">
@@ -198,13 +237,10 @@ async function abrirModal(id = null) {
             ${optsCats}
           </select>
         </div>
-
         <div class="flex items-center gap-2 pt-1">
-          <input id="s-disp" type="checkbox" class="w-4 h-4 accent-orange-500"
-            ${d.disponivel !== false ? 'checked' : ''}>
+          <input id="s-disp" type="checkbox" class="w-4 h-4 accent-orange-500" ${d.disponivel !== false ? 'checked' : ''}>
           <label for="s-disp" class="text-sm font-medium text-slate-700">Disponível no cardápio</label>
         </div>
-
       </div>`,
     showCancelButton: true,
     confirmButtonText: 'Salvar',
@@ -226,15 +262,7 @@ async function abrirModal(id = null) {
       const preco = parseFloat(precoStr)
       if (isNaN(preco) || preco < 0) { Swal.showValidationMessage('Preço inválido.'); return false }
 
-      return {
-        nome,
-        descricao,
-        preco,
-        tempo_preparo: tempoStr ? parseInt(tempoStr) : null,
-        categoria_id,
-        disponivel,
-        emoji,
-      }
+      return { nome, descricao, preco, tempo_preparo: tempoStr ? parseInt(tempoStr) : null, categoria_id, disponivel, emoji }
     },
   })
   if (!value) return
@@ -244,16 +272,20 @@ async function abrirModal(id = null) {
       ? await supabase.from('pratos').update(value).eq('id', id)
       : await supabase.from('pratos').insert(value)
     if (error) throw error
-    Swal.fire({
-      icon: 'success',
-      title: id ? 'Prato atualizado!' : 'Prato criado!',
-      timer: 1500,
-      showConfirmButton: false,
-    })
+    showToast(id ? 'Prato atualizado!' : 'Prato criado!')
     carregar()
   } catch (err) {
     Swal.fire({ icon: 'error', title: 'Erro ao salvar', text: err.message })
   }
+}
+
+window._sortBy = col => {
+  sortDir = sortCol === col && sortDir === 'asc' ? 'desc' : 'asc'
+  sortCol = col
+  document.querySelectorAll('[data-sort]').forEach(el => {
+    el.textContent = el.dataset.sort === col ? (sortDir === 'asc' ? ' ↑' : ' ↓') : ' ↕'
+  })
+  pagina = 1; carregar()
 }
 
 window._editar = id => abrirModal(id)
@@ -272,12 +304,7 @@ window._toggle = async (id, novoStatus, nome) => {
   if (!isConfirmed) return
   const { error } = await supabase.from('pratos').update({ disponivel: novoStatus }).eq('id', id)
   if (error) { Swal.fire({ icon: 'error', title: 'Erro', text: error.message }); return }
-  Swal.fire({
-    icon: 'success',
-    title: novoStatus ? 'Prato disponibilizado!' : 'Prato removido do cardápio!',
-    timer: 1500,
-    showConfirmButton: false,
-  })
+  showToast(novoStatus ? 'Prato disponibilizado!' : 'Prato removido do cardápio!')
   carregar()
 }
 
@@ -294,7 +321,7 @@ window._excluir = async (id, nome) => {
   if (!isConfirmed) return
   const { error } = await supabase.from('pratos').delete().eq('id', id)
   if (error) { Swal.fire({ icon: 'error', title: 'Erro', text: error.message }); return }
-  Swal.fire({ icon: 'success', title: 'Prato excluído!', timer: 1500, showConfirmButton: false })
+  showToast('Prato excluído!')
   carregar()
 }
 

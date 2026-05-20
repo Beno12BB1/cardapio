@@ -50,10 +50,11 @@ async function carregarDados() {
         .eq('ativo', true)
         .order('nome')
         .limit(6),
-      supabase.from('pratos').select('disponivel, categorias(nome)'),
+      supabase.from('pratos').select('nome, preco, disponivel, categorias(nome)'),
     ])
 
     renderCards(totalPratos, pratosDisponiveis, totalCategorias, categoriasAtivas)
+    renderStats(todosPratosGrafico || [])
     renderPratosRecentes(pratosRecentes || [])
     renderCategorias(categorias || [])
     renderGrafico(todosPratosGrafico || [])
@@ -120,6 +121,34 @@ function renderCategorias(cats) {
       <div>
         <div class="text-sm font-medium">${c.nome}</div>
         ${c.descricao ? `<div class="text-xs text-slate-400">${c.descricao}</div>` : ''}
+      </div>
+    </div>`).join('')
+}
+
+function renderStats(pratos) {
+  const el = document.getElementById('cards-stats')
+  if (!el || !pratos.length) { if (el) el.innerHTML = ''; return }
+
+  const precos = pratos.map(p => Number(p.preco))
+  const media = precos.reduce((s, v) => s + v, 0) / precos.length
+  const maisCaro  = pratos.reduce((a, b) => Number(a.preco) >= Number(b.preco) ? a : b)
+  const maisBarato = pratos.reduce((a, b) => Number(a.preco) <= Number(b.preco) ? a : b)
+  const pct = Math.round((pratos.filter(p => p.disponivel).length / pratos.length) * 100)
+
+  const dados = [
+    { label: 'Preço Médio',           valor: `R$ ${media.toFixed(2)}`,                    icon: 'tag',          cor: 'bg-teal-500' },
+    { label: 'Prato Mais Caro',       valor: `R$ ${Number(maisCaro.preco).toFixed(2)}`,   sub: maisCaro.nome,   icon: 'arrow-up',     cor: 'bg-red-500' },
+    { label: 'Prato Mais Barato',     valor: `R$ ${Number(maisBarato.preco).toFixed(2)}`, sub: maisBarato.nome, icon: 'check-circle', cor: 'bg-sky-500' },
+    { label: 'Disponibilidade',       valor: `${pct}%`,                                   icon: 'chart-bar',    cor: 'bg-indigo-500' },
+  ]
+
+  el.innerHTML = dados.map(c => `
+    <div class="card flex items-center gap-4">
+      <div class="p-3 rounded-xl ${c.cor} text-white shrink-0">${heroicon(c.icon, 'w-6 h-6')}</div>
+      <div class="min-w-0">
+        <div class="text-2xl font-bold text-slate-800 dark:text-slate-100">${c.valor}</div>
+        <div class="text-xs text-slate-500 dark:text-slate-400">${c.label}</div>
+        ${c.sub ? `<div class="text-xs text-slate-400 truncate mt-0.5">${c.sub}</div>` : ''}
       </div>
     </div>`).join('')
 }

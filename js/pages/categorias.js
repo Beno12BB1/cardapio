@@ -4,10 +4,15 @@ import { renderSidebar } from '../ui/sidebar.js'
 import { renderHeader, setTitulo } from '../ui/header.js'
 import { renderIcons } from '../ui/icons.js'
 import { supabase } from '../supabase.js'
+import { showToast } from '../ui/toast.js'
 import Swal from 'sweetalert2'
 
 const POR_PAGINA = 10
 let pagina = 1, totalPaginas = 1, busca = '', filtroAtivo = ''
+let sortCol = 'nome', sortDir = 'asc'
+let buscaTimer
+
+const esc = s => (s || '').replace(/'/g, "\\'")
 
 async function init() {
   const usuario = await verificarAutenticacao()
@@ -22,6 +27,16 @@ async function init() {
   document.getElementById('form-busca').addEventListener('submit', e => {
     e.preventDefault()
     busca = document.getElementById('input-busca').value.trim()
+    filtroAtivo = document.getElementById('filtro-ativo').value
+    pagina = 1; carregar()
+  })
+
+  document.getElementById('input-busca').addEventListener('input', e => {
+    clearTimeout(buscaTimer)
+    buscaTimer = setTimeout(() => { busca = e.target.value.trim(); pagina = 1; carregar() }, 300)
+  })
+
+  document.getElementById('filtro-ativo').addEventListener('change', () => {
     filtroAtivo = document.getElementById('filtro-ativo').value
     pagina = 1; carregar()
   })
@@ -44,8 +59,14 @@ async function init() {
 }
 
 async function carregar() {
+  document.getElementById('tbody').innerHTML = `<tr><td colspan="4" class="px-4 py-8">
+    <div class="space-y-2">
+      ${Array(4).fill('<div class="animate-pulse h-10 bg-slate-200 dark:bg-slate-700 rounded-lg w-full"></div>').join('')}
+    </div></td></tr>`
+
   const inicio = (pagina - 1) * POR_PAGINA
-  let q = supabase.from('categorias').select('*', { count: 'exact' }).order('nome')
+  let q = supabase.from('categorias').select('*', { count: 'exact' })
+    .order(sortCol, { ascending: sortDir === 'asc' })
   if (busca)       q = q.ilike('nome', `%${busca}%`)
   if (filtroAtivo) q = q.eq('ativo', filtroAtivo === 'true')
   q = q.range(inicio, inicio + POR_PAGINA - 1)
@@ -90,9 +111,6 @@ function renderTabela(rows) {
   }).join('')
 }
 
-// Escapa aspas simples para uso seguro em onclick
-const esc = s => (s || '').replace(/'/g, "\\'")
-
 async function abrirModal(id = null) {
   let dados = { nome: '', descricao: '' }
   if (id) {
@@ -121,10 +139,7 @@ async function abrirModal(id = null) {
     preConfirm: () => {
       const nome = document.getElementById('s-nome').value.trim()
       if (!nome) { Swal.showValidationMessage('O nome é obrigatório.'); return false }
-      return {
-        nome,
-        descricao: document.getElementById('s-desc').value.trim() || null,
-      }
+      return { nome, descricao: document.getElementById('s-desc').value.trim() || null }
     },
   })
   if (!value) return
@@ -134,11 +149,20 @@ async function abrirModal(id = null) {
       ? await supabase.from('categorias').update(value).eq('id', id)
       : await supabase.from('categorias').insert({ ...value, ativo: true })
     if (error) throw error
-    Swal.fire({ icon: 'success', title: id ? 'Categoria atualizada!' : 'Categoria criada!', timer: 1500, showConfirmButton: false })
+    showToast(id ? 'Categoria atualizada!' : 'Categoria criada!')
     carregar()
   } catch (err) {
     Swal.fire({ icon: 'error', title: 'Erro ao salvar', text: err.message })
   }
+}
+
+window._sortBy = col => {
+  sortDir = sortCol === col && sortDir === 'asc' ? 'desc' : 'asc'
+  sortCol = col
+  document.querySelectorAll('[data-sort]').forEach(el => {
+    el.textContent = el.dataset.sort === col ? (sortDir === 'asc' ? ' ↑' : ' ↓') : ' ↕'
+  })
+  pagina = 1; carregar()
 }
 
 window._editar = id => abrirModal(id)
@@ -157,7 +181,7 @@ window._toggle = async (id, novoStatus, nome) => {
   if (!isConfirmed) return
   const { error } = await supabase.from('categorias').update({ ativo: novoStatus }).eq('id', id)
   if (error) { Swal.fire({ icon: 'error', title: 'Erro', text: error.message }); return }
-  Swal.fire({ icon: 'success', title: `Categoria ${novoStatus ? 'reativada' : 'inativada'}!`, timer: 1500, showConfirmButton: false })
+  showToast(`Categoria ${novoStatus ? 'reativada' : 'inativada'}!`)
   carregar()
 }
 
@@ -180,7 +204,7 @@ window._excluir = async (id, nome) => {
   if (!isConfirmed) return
   const { error } = await supabase.from('categorias').delete().eq('id', id)
   if (error) { Swal.fire({ icon: 'error', title: 'Erro', text: error.message }); return }
-  Swal.fire({ icon: 'success', title: 'Excluída!', timer: 1500, showConfirmButton: false })
+  showToast('Categoria excluída!')
   carregar()
 }
 
