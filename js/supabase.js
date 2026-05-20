@@ -8,3 +8,20 @@ if (!url || !key) {
 }
 
 export const supabase = createClient(url, key)
+
+export async function uploadImagem(arquivo) {
+  const ext  = arquivo.name.split('.').pop().toLowerCase()
+  const nome = `${crypto.randomUUID()}.${ext}`
+
+  const { data, error } = await supabase.storage
+    .from('pratos')
+    .upload(nome, arquivo, { cacheControl: '3600', upsert: false })
+
+  if (error) throw error
+
+  const { data: { publicUrl } } = supabase.storage
+    .from('pratos')
+    .getPublicUrl(data.path)
+
+  return publicUrl
+}

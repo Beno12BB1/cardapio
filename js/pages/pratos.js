@@ -3,7 +3,7 @@ import { verificarAutenticacao } from '../auth.js'
 import { renderSidebar } from '../ui/sidebar.js'
 import { renderHeader, setTitulo } from '../ui/header.js'
 import { renderIcons } from '../ui/icons.js'
-import { supabase } from '../supabase.js'
+import { supabase, uploadImagem } from '../supabase.js'
 import { showToast } from '../ui/toast.js'
 import { abrirDropdown } from '../ui/dropdown.js'
 import Swal from 'sweetalert2'
@@ -221,13 +221,27 @@ async function abrirModal(id = null) {
           </div>
         </div>
         <div>
-          <label class="text-sm font-medium text-slate-700">URL da Imagem (opcional)</label>
-          <input id="s-imagem" type="url" class="input-field mt-1"
-            placeholder="https://exemplo.com/imagem.jpg"
-            value="${d.imagem_url || ''}">
-          <div id="preview-imagem" class="mt-2 ${d.imagem_url ? '' : 'hidden'}">
-            <img id="img-preview" src="${d.imagem_url || ''}"
-              class="w-full h-28 object-cover rounded-lg border border-slate-200 dark:border-slate-600">
+          <label class="text-sm font-medium text-slate-700">Imagem (opcional)</label>
+          ${d.imagem_url ? `
+            <div class="mb-2 mt-1">
+              <img src="${d.imagem_url}"
+                class="w-full h-24 object-cover rounded-lg border border-slate-200 dark:border-slate-600">
+              <p class="text-xs text-slate-400 mt-0.5">Imagem atual — escolha um arquivo para substituir</p>
+            </div>` : ''}
+          <input id="s-imagem" type="file" accept="image/*"
+            class="block w-full mt-1 text-sm text-slate-500 cursor-pointer rounded-lg
+                   file:mr-3 file:py-1.5 file:px-4 file:rounded-lg file:border-0
+                   file:text-sm file:font-medium file:bg-orange-100 file:text-orange-700
+                   hover:file:bg-orange-200 file:cursor-pointer">
+          <div id="preview-imagem" class="mt-2 hidden">
+            <img id="img-preview" class="w-full h-24 object-cover rounded-lg border border-slate-200 dark:border-slate-600">
+            <p class="text-xs text-slate-400 mt-0.5">Nova imagem selecionada</p>
+          </div>
+          <div id="upload-progress" class="mt-2 hidden">
+            <p class="text-xs text-slate-500 mb-1">Enviando imagem…</p>
+            <div class="h-1.5 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+              <div id="progress-bar" class="h-full bg-orange-500 rounded-full transition-all duration-300" style="width:0%"></div>
+            </div>
           </div>
         </div>
         <div>
@@ -262,17 +276,19 @@ async function abrirModal(id = null) {
     cancelButtonText: 'Cancelar',
     confirmButtonColor: '#f97316',
     didOpen: () => {
-      const inputImg = document.getElementById('s-imagem')
-      const preview  = document.getElementById('preview-imagem')
-      const imgEl    = document.getElementById('img-preview')
-      if (!inputImg) return
-      inputImg.addEventListener('input', () => {
-        const url = inputImg.value.trim()
-        imgEl.src = url
-        preview.classList.toggle('hidden', !url)
+      const input   = document.getElementById('s-imagem')
+      const preview = document.getElementById('preview-imagem')
+      const imgEl   = document.getElementById('img-preview')
+      if (!input) return
+      input.addEventListener('change', () => {
+        const file = input.files[0]
+        if (!file) { preview.classList.add('hidden'); return }
+        const reader = new FileReader()
+        reader.onload = e => { imgEl.src = e.target.result; preview.classList.remove('hidden') }
+        reader.readAsDataURL(file)
       })
     },
-    preConfirm: () => {
+    preConfirm: async () => {
       const nome         = document.getElementById('s-nome').value.trim()
       const descricao    = document.getElementById('s-desc').value.trim() || null
       const precoStr     = document.getElementById('s-preco').value
@@ -280,7 +296,6 @@ async function abrirModal(id = null) {
       const categoria_id = document.getElementById('s-cat').value
       const disponivel   = document.getElementById('s-disp').checked
       const emoji        = document.getElementById('s-emoji').value.trim() || '🍽️'
-      const imagem_url   = document.getElementById('s-imagem').value.trim() || null
 
       if (!nome)         { Swal.showValidationMessage('O nome é obrigatório.'); return false }
       if (!precoStr)     { Swal.showValidationMessage('O preço é obrigatório.'); return false }
@@ -288,6 +303,31 @@ async function abrirModal(id = null) {
 
       const preco = parseFloat(precoStr)
       if (isNaN(preco) || preco < 0) { Swal.showValidationMessage('Preço inválido.'); return false }
+
+      let imagem_url = d.imagem_url || null
+      const arquivo  = document.getElementById('s-imagem')?.files[0]
+
+      if (arquivo) {
+        const progressBar = document.getElementById('progress-bar')
+        const progressDiv = document.getElementById('upload-progress')
+        progressDiv.classList.remove('hidden')
+        progressBar.style.width = '0%'
+
+        const tick = setInterval(() => {
+          const w = parseFloat(progressBar.style.width) || 0
+          if (w < 80) progressBar.style.width = `${w + 15}%`
+        }, 200)
+
+        try {
+          imagem_url = await uploadImagem(arquivo)
+          clearInterval(tick)
+          progressBar.style.width = '100%'
+        } catch (err) {
+          clearInterval(tick)
+          Swal.showValidationMessage(`Erro no upload: ${err.message}`)
+          return false
+        }
+      }
 
       return { nome, descricao, preco, tempo_preparo: tempoStr ? parseInt(tempoStr) : null, categoria_id, disponivel, emoji, imagem_url }
     },
