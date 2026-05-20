@@ -22,7 +22,6 @@ export function renderHeader(usuario) {
       </div>
     </header>`
 
-  // Aplicar tema salvo
   if (localStorage.getItem('tema') === 'dark') {
     document.documentElement.classList.add('dark')
     document.getElementById('icone-tema').innerHTML = heroicon('sun')
@@ -33,6 +32,28 @@ export function renderHeader(usuario) {
     localStorage.setItem('tema', dark ? 'dark' : 'light')
     document.getElementById('icone-tema').innerHTML = heroicon(dark ? 'sun' : 'moon')
   })
+
+  if (!document.getElementById('btn-top')) {
+    const btn = document.createElement('button')
+    btn.id = 'btn-top'
+    btn.title = 'Voltar ao topo'
+    btn.className = 'fixed bottom-6 right-6 z-50 p-3 rounded-full bg-orange-500 hover:bg-orange-600 text-white shadow-lg transition-all duration-300 no-print'
+    btn.style.cssText = 'opacity:0;transform:translateY(8px);pointer-events:none'
+    btn.innerHTML = heroicon('arrow-up', 'w-5 h-5')
+    document.body.appendChild(btn)
+
+    setTimeout(() => {
+      const main = document.querySelector('main')
+      if (!main) return
+      main.addEventListener('scroll', () => {
+        const show = main.scrollTop > 200
+        btn.style.opacity = show ? '1' : '0'
+        btn.style.transform = show ? 'translateY(0)' : 'translateY(8px)'
+        btn.style.pointerEvents = show ? 'auto' : 'none'
+      }, { passive: true })
+      btn.addEventListener('click', () => main.scrollTo({ top: 0, behavior: 'smooth' }))
+    }, 0)
+  }
 }
 
 export function setTitulo(titulo) {

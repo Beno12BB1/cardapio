@@ -35,6 +35,7 @@ async function carregarDados() {
       { count: categoriasAtivas },
       { data: pratosRecentes },
       { data: categorias },
+      { data: todosPratosGrafico },
     ] = await Promise.all([
       supabase.from('pratos').select('*', { count: 'exact', head: true }),
       supabase.from('pratos').select('*', { count: 'exact', head: true }).eq('disponivel', true),
@@ -49,11 +50,13 @@ async function carregarDados() {
         .eq('ativo', true)
         .order('nome')
         .limit(6),
+      supabase.from('pratos').select('disponivel, categorias(nome)'),
     ])
 
     renderCards(totalPratos, pratosDisponiveis, totalCategorias, categoriasAtivas)
     renderPratosRecentes(pratosRecentes || [])
     renderCategorias(categorias || [])
+    renderGrafico(todosPratosGrafico || [])
   } catch (err) {
     Swal.fire({ icon: 'error', title: 'Erro ao carregar dados', text: err.message })
   }
@@ -119,6 +122,34 @@ function renderCategorias(cats) {
         ${c.descricao ? `<div class="text-xs text-slate-400">${c.descricao}</div>` : ''}
       </div>
     </div>`).join('')
+}
+
+function renderGrafico(pratos) {
+  const grupos = {}
+  pratos.forEach(p => {
+    const cat = p.categorias?.nome || 'Sem categoria'
+    grupos[cat] = (grupos[cat] || 0) + 1
+  })
+
+  const entradas = Object.entries(grupos).sort(([, a], [, b]) => b - a)
+  const max = entradas[0]?.[1] || 1
+
+  document.getElementById('grafico-categorias').innerHTML = entradas.length
+    ? entradas.map(([cat, qtd]) => {
+        const pct = Math.round((qtd / max) * 100)
+        return `
+          <div>
+            <div class="flex justify-between text-sm mb-1.5">
+              <span class="font-medium text-slate-700 dark:text-slate-300 truncate max-w-[65%]">${cat}</span>
+              <span class="text-slate-400 shrink-0">${qtd} prato${qtd !== 1 ? 's' : ''}</span>
+            </div>
+            <div class="h-2.5 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
+              <div class="h-full bg-orange-500 rounded-full"
+                style="width:${pct}%;transition:width 0.8s ease"></div>
+            </div>
+          </div>`
+      }).join('')
+    : '<p class="text-slate-400 text-sm">Nenhum prato cadastrado.</p>'
 }
 
 init()

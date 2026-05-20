@@ -38,6 +38,47 @@ document.getElementById('form-login').addEventListener('submit', async e => {
   }
 })
 
+// === FORÇA DE SENHA + VALIDAÇÃO ===
+{
+  const cadEmail    = document.getElementById('cad-email')
+  const cadSenha    = document.getElementById('cad-senha')
+  const cadConfirma = document.getElementById('cad-confirma')
+  const btnCad      = document.getElementById('btn-cadastro')
+
+  btnCad.disabled = true
+
+  function verificarCampos() {
+    btnCad.disabled = !(cadEmail.value.trim() && cadSenha.value && cadConfirma.value)
+  }
+
+  function atualizarForca(senha) {
+    const div    = document.getElementById('forca-senha')
+    const texto  = document.getElementById('texto-forca')
+    const barras = ['barra-f1', 'barra-f2', 'barra-f3'].map(id => document.getElementById(id))
+    if (!senha) { div.classList.add('hidden'); return }
+    div.classList.remove('hidden')
+
+    let nivel, label, cor
+    if (senha.length < 6) {
+      nivel = 1; label = 'Fraca'; cor = 'bg-red-500'
+    } else if (senha.length < 8 || !/\d/.test(senha)) {
+      nivel = 2; label = 'Média'; cor = 'bg-yellow-500'
+    } else {
+      nivel = 3; label = 'Forte'; cor = 'bg-green-500'
+    }
+
+    barras.forEach((b, i) => {
+      b.className = `h-1 flex-1 rounded-full transition-colors duration-300 ${i < nivel ? cor : 'bg-slate-200'}`
+    })
+    texto.textContent = label
+    texto.className = `text-xs ${nivel === 1 ? 'text-red-500' : nivel === 2 ? 'text-yellow-500' : 'text-green-500'}`
+  }
+
+  cadSenha.addEventListener('input', () => { atualizarForca(cadSenha.value); verificarCampos() })
+  cadEmail.addEventListener('input', verificarCampos)
+  cadConfirma.addEventListener('input', verificarCampos)
+}
+
 // === CADASTRO ===
 document.getElementById('form-cadastro').addEventListener('submit', async e => {
   e.preventDefault()

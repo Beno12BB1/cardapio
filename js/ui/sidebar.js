@@ -1,5 +1,6 @@
 import { heroicon } from './icons.js'
 import { logout } from '../auth.js'
+import { supabase } from '../supabase.js'
 
 const BASE = import.meta.env.BASE_URL
 
@@ -22,6 +23,9 @@ export function renderSidebar(paginaAtiva) {
           ${ativo ? 'bg-orange-500 text-white' : 'text-slate-300 hover:bg-slate-700 hover:text-white'}">
         ${heroicon(item.icon)}
         <span>${item.label}</span>
+        ${item.key === 'cardapio'
+          ? `<span id="badge-cardapio" class="ml-auto text-xs font-bold px-1.5 py-0.5 rounded-full hidden ${ativo ? 'bg-white/20 text-white' : 'bg-orange-500 text-white'}"></span>`
+          : ''}
       </a>`
   }).join('')
 
@@ -48,4 +52,15 @@ export function renderSidebar(paginaAtiva) {
     </div>`
 
   document.getElementById('btn-logout')?.addEventListener('click', () => logout())
+
+  supabase.from('pratos')
+    .select('*', { count: 'exact', head: true })
+    .eq('disponivel', true)
+    .then(({ count }) => {
+      const badge = document.getElementById('badge-cardapio')
+      if (badge && count) {
+        badge.textContent = count
+        badge.classList.remove('hidden')
+      }
+    })
 }

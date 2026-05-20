@@ -118,7 +118,7 @@ function renderTabela(rows) {
           </div>
         </td>
         <td class="px-4 py-3 text-slate-600 dark:text-slate-300">${r.categorias?.nome || '—'}</td>
-        <td class="px-4 py-3 font-semibold text-orange-600 dark:text-orange-400">
+        <td class="px-4 py-3 font-semibold ${r.disponivel ? 'text-green-600 dark:text-green-400' : 'text-slate-400 dark:text-slate-500'}">
           R$ ${Number(r.preco).toFixed(2)}
         </td>
         <td class="px-4 py-3 text-slate-600 dark:text-slate-300">${tempo}</td>

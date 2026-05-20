@@ -162,10 +162,16 @@ window._toggle = async (id, novoStatus, nome) => {
 }
 
 window._excluir = async (id, nome) => {
+  const { count } = await supabase.from('pratos')
+    .select('*', { count: 'exact', head: true })
+    .eq('categoria_id', id)
+  const infoPrevia = count > 0
+    ? `<p class="mt-2 text-sm text-orange-600 font-medium">⚠️ ${count} prato${count !== 1 ? 's' : ''} vinculado${count !== 1 ? 's' : ''} perderão a categoria.</p>`
+    : `<p class="mt-2 text-sm text-slate-400">Nenhum prato vinculado.</p>`
   const { isConfirmed } = await Swal.fire({
     icon: 'warning',
     title: 'Excluir categoria?',
-    text: `Deseja excluir "${nome}"? Os pratos vinculados não serão excluídos.`,
+    html: `<p>Deseja excluir <strong>"${nome}"</strong>?</p>${infoPrevia}`,
     showCancelButton: true,
     confirmButtonText: 'Sim, excluir',
     cancelButtonText: 'Cancelar',

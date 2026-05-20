@@ -38,6 +38,19 @@ async function init() {
   document.body.style.visibility = 'visible'
 }
 
+function animarContador(destino) {
+  const el = document.getElementById('contador-disponiveis')
+  if (!el) return
+  const inicio = performance.now()
+  const duracao = 900
+  function tick(agora) {
+    const t = Math.min((agora - inicio) / duracao, 1)
+    el.textContent = Math.round((1 - Math.pow(1 - t, 3)) * destino)
+    if (t < 1) requestAnimationFrame(tick)
+  }
+  requestAnimationFrame(tick)
+}
+
 async function carregarTudo() {
   try {
     const { data, error } = await supabase
@@ -47,6 +60,7 @@ async function carregarTudo() {
 
     if (error) throw error
     todosOsPratos = data || []
+    animarContador(todosOsPratos.filter(p => p.disponivel).length)
     renderPills()
     renderCardapio()
   } catch (err) {
