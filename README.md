@@ -84,8 +84,7 @@ npm run deploy
 
 | Nome | GitHub |
 |---|---|
-| Integrante 1 | [@usuario](https://github.com/usuario) |
-| Integrante 2 | [@usuario](https://github.com/usuario) |
-| Integrante 3 | [@usuario](https://github.com/usuario) |
+| Júlia Dias      | [@vesky69](https://github.com/vesky69)     |
+| Breno Rodrigues | [@beno12bb1](https://github.com/beno12bb1) |
 
-> 📚 Projeto desenvolvido para a disciplina de **Desenvolvimento Web** — [Fatec Itu](https://www.fatecitu.edu.br/)
+> 📚 Projeto desenvolvido para a disciplina de **Linguagem de Programção** — [Fatec Itu](https://www.fatecitu.edu.br/)
